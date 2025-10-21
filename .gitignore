@@ -1,0 +1,9 @@
+# Ignorar dependencias del Backend
+/backend/node_modules
+
+# Ignorar dependencias del Frontend (para el futuro)
+/frontend/node_modules
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
