@@ -11,7 +11,6 @@ function RutaAdmin({ children }: Props) {
   const { isAuthenticated, user } = useAuth();
 
   // 2. Revisamos si está logueado
-  // (Esto es por si acaso, aunque RutaProtegida ya lo haría)
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

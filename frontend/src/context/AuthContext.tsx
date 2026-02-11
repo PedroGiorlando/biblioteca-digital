@@ -16,6 +16,7 @@ interface AuthContextType {
   token: string | null;
   login: (token: string, user: User) => void;
   logout: () => void;
+  actualizarUsuario: (datosNuevos: any) => void;
 }
 
 // 2. Creamos el Contexto con un valor inicial (null)
@@ -40,7 +41,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAuthenticated(true);
     }
   }, []);
+ const actualizarUsuario = (datosNuevos: any) => {
+    // 1. Actualizamos el estado de React (para que se vea al instante)
+    setUser((prevUser: any) => {
+      if (!prevUser) return null;
 
+      const usuarioActualizado = { ...prevUser, ...datosNuevos };
+
+      // 2. ¡LA CLAVE! Guardamos en localStorage para que sobreviva al F5
+      localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+
+      return usuarioActualizado;
+    });
+  };
   // 5. Función de Login: guarda en el estado Y en localStorage
   const login = (newToken: string, newUser: User) => {
     localStorage.setItem('token', newToken);
@@ -59,12 +72,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAuthenticated(false);
   };
 
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, user, token, login, logout }}>
+return (
+    <AuthContext.Provider value={{ 
+        isAuthenticated: !!user, 
+        token, 
+        user, 
+        login, 
+        logout,
+        actualizarUsuario // <--- NO OLVIDES AGREGARLA AQUÍ
+    }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 // 7. Creamos un "Hook" personalizado para usar el contexto fácilmente
 export function useAuth() {

@@ -1,113 +1,120 @@
-import { useState, useEffect } from 'react';
+import {
+  Box, SimpleGrid, Stat, StatLabel, StatNumber, StatHelpText,
+  StatArrow, Icon, Flex, useColorModeValue, Heading, Spinner
+} from '@chakra-ui/react';
+import { FiUsers, FiBook, FiDollarSign, FiShoppingCart } from 'react-icons/fi'; 
+import { useEffect, useState } from 'react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import {
-  Box,
-  Heading,
-  Spinner,
-  SimpleGrid,
-  // 1. Importar los componentes de Estadísticas de Chakra
-  Stat,
-  StatGroup,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  Icon, HStack,
-  Text
-} from '@chakra-ui/react';
-import { FaBook, FaUsers, FaExchangeAlt } from 'react-icons/fa'; // Íconos
 
-// 2. Definimos el "molde" de los datos que esperamos
-interface DashboardStats {
+interface StatsData {
   totalUsuarios: number;
   totalLibros: number;
-  totalPrestamosActivos: number;
-  librosInactivos: number;
+  totalVentas: number;
+  gananciasTotales: number;
 }
 
-function Dashboard() {
-  // 3. Estados para los datos y la carga
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+export default function Dashboard() {
+  const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
-  const { token, user } = useAuth(); // Traemos el 'user' para el saludo
+  const { token } = useAuth();
 
-  // 4. useEffect para cargar los datos
+  // Colores para las tarjetas
+  const bgCard = useColorModeValue('white', 'gray.700');
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await api.get('/admin/stats', {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const res = await api.get('/admin/stats', {
+            headers: { 'Authorization': `Bearer ${token}` }
         });
-        setStats(response.data);
+        setStats(res.data);
       } catch (error) {
-        console.error('Error al cargar stats:', error);
+        console.error("Error cargando estadísticas", error);
       } finally {
         setLoading(false);
       }
     };
-
-    if (token) {
-      fetchStats();
-    }
+    fetchStats();
   }, [token]);
 
-  if (loading) return <Spinner />;
+  if (loading) return <Flex justify="center" p={10}><Spinner size="xl" /></Flex>;
 
   return (
     <Box>
-      <Heading mb={4}>¡Bienvenido, {user?.nombre}!</Heading>
-      <Text fontSize="lg" color="gray.600" mb={8}>
-        Aquí tienes un resumen del estado de la biblioteca:
-      </Text>
+      <Heading mb={6}>Resumen del Negocio</Heading>
+      
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={5}>
+        
+        {/* TARJETA 1: GANANCIAS */}
+        <StatCard
+          title={'Ingresos Totales'}
+          stat={`$${stats?.gananciasTotales || 0}`}
+          icon={<FiDollarSign size={'3em'} />}
+          bg={bgCard}
+          color="green.400"
+        />
 
-      {/* 5. El Grupo de Estadísticas */}
-      {stats && (
-        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10}>
+        {/* TARJETA 2: VENTAS */}
+        <StatCard
+          title={'Libros Vendidos'}
+          stat={stats?.totalVentas || 0}
+          icon={<FiShoppingCart size={'3em'} />}
+          bg={bgCard}
+          color="blue.400"
+        />
 
-          {/* Tarjeta 1: Libros Activos */}
-          <StatGroup>
-            <Stat p={5} boxShadow="md" borderRadius="md" border="1px" borderColor="gray.200">
-              <HStack>
-                <Icon as={FaBook} boxSize={8} color="blue.500" />
-                <Box>
-                  <StatLabel>Libros en Catálogo</StatLabel>
-                  <StatNumber>{stats.totalLibros}</StatNumber>
-                  <StatHelpText>{stats.librosInactivos} libros inactivos</StatHelpText>
-                </Box>
-              </HStack>
-            </Stat>
-          </StatGroup>
+        {/* TARJETA 3: USUARIOS */}
+        <StatCard
+          title={'Usuarios Registrados'}
+          stat={stats?.totalUsuarios || 0}
+          icon={<FiUsers size={'3em'} />}
+          bg={bgCard}
+          color="purple.400"
+        />
 
-          {/* Tarjeta 2: Préstamos Activos */}
-          <StatGroup>
-            <Stat p={5} boxShadow="md" borderRadius="md" border="1px" borderColor="gray.200">
-              <HStack>
-                <Icon as={FaExchangeAlt} boxSize={8} color="green.500" />
-                <Box>
-                  <StatLabel>Préstamos Activos</StatLabel>
-                  <StatNumber>{stats.totalPrestamosActivos}</StatNumber>
-                </Box>
-              </HStack>
-            </Stat>
-          </StatGroup>
-
-          {/* Tarjeta 3: Usuarios Totales */}
-          <StatGroup>
-            <Stat p={5} boxShadow="md" borderRadius="md" border="1px" borderColor="gray.200">
-              <HStack>
-                <Icon as={FaUsers} boxSize={8} color="purple.500" />
-                <Box>
-                  <StatLabel>Usuarios Registrados</StatLabel>
-                  <StatNumber>{stats.totalUsuarios}</StatNumber>
-                </Box>
-              </HStack>
-            </Stat>
-          </StatGroup>
-
-        </SimpleGrid>
-      )}
+        {/* TARJETA 4: CATALOGO */}
+        <StatCard
+          title={'Libros Activos'}
+          stat={stats?.totalLibros || 0}
+          icon={<FiBook size={'3em'} />}
+          bg={bgCard}
+          color="orange.400"
+        />
+        
+      </SimpleGrid>
     </Box>
   );
 }
 
-export default Dashboard;
+// Componente auxiliar para las tarjetas
+function StatCard(props: any) {
+  const { title, stat, icon, bg, color } = props;
+  return (
+    <Stat
+      px={{ base: 2, md: 4 }}
+      py={'5'}
+      shadow={'xl'}
+      border={'1px solid'}
+      borderColor={useColorModeValue('gray.200', 'gray.600')}
+      rounded={'lg'}
+      bg={bg}>
+      <Flex justifyContent={'space-between'}>
+        <Box pl={{ base: 2, md: 4 }}>
+          <StatLabel fontWeight={'medium'} isTruncated>
+            {title}
+          </StatLabel>
+          <StatNumber fontSize={'2xl'} fontWeight={'bold'}>
+            {stat}
+          </StatNumber>
+        </Box>
+        <Box
+          my={'auto'}
+          color={color}
+          alignContent={'center'}>
+          {icon}
+        </Box>
+      </Flex>
+    </Stat>
+  );
+}

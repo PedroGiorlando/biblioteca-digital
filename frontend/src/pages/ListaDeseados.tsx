@@ -4,7 +4,6 @@ import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import LibroCard from '../components/LibroCard';
 
-// Reusamos la interfaz de Libro
 interface Libro {
   id: number;
   titulo: string;

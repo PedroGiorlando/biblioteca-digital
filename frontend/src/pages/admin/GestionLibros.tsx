@@ -7,7 +7,8 @@ import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
   FormControl, FormLabel, Input, Textarea, useDisclosure, VStack,
   AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay,
-  InputGroup, InputLeftElement, Image // Importar Image para previsualizar
+  InputGroup, InputLeftElement, Image, useColorModeValue,
+  Flex
 } from '@chakra-ui/react';
 import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 import { SearchIcon } from '@chakra-ui/icons';
@@ -22,7 +23,6 @@ interface Libro {
   portada_url: string | null;
 }
 
-// En el formulario ya no pedimos 'portada_url' como texto, eso lo maneja el input file
 type LibroForm = Omit<Libro, 'id' | 'fecha_publicacion' | 'portada_url'> & { fecha_publicacion: string };
 
 const initialState: LibroForm = {
@@ -33,7 +33,7 @@ const initialState: LibroForm = {
   fecha_publicacion: ''
 };
 
-function GestionLibros() {
+export default function GestionLibros() {
   const [libros, setLibros] = useState<Libro[]>([]);
   const [loading, setLoading] = useState(true);
   const [libroSeleccionado, setLibroSeleccionado] = useState<Libro | null>(null);
@@ -42,10 +42,17 @@ function GestionLibros() {
   const [totalPages, setTotalPages] = useState(0);
   const [busqueda, setBusqueda] = useState('');
   
+  // --- COLORES MODO OSCURO ---
+  const bgTable = useColorModeValue('white', 'gray.800');
+  const colorTexto = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const bgInput = useColorModeValue('white', 'gray.700');
+  const bgHover = useColorModeValue('gray.50', 'gray.700');
+  const bgHeader = useColorModeValue('gray.50', 'gray.900');
+
   // --- NUEVOS ESTADOS PARA ARCHIVO ---
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // -----------------------------------
 
   const { token } = useAuth();
   const toast = useToast();
@@ -76,7 +83,6 @@ function GestionLibros() {
     if (token) fetchLibros();
   }, [token, currentPage, busqueda]);
 
-  // Lógica de Borrado (Igual)
   const abrirAlertaBorrado = (libro: Libro) => {
     setLibroSeleccionado(libro);
     onDeleteAlertOpen();
@@ -101,8 +107,6 @@ function GestionLibros() {
     }
   };
 
-  // --- LÓGICA DE CREAR/EDITAR CON FOTO ---
-
   const abrirModalEditar = (libro: Libro) => {
     const fecha = libro.fecha_publicacion ? new Date(libro.fecha_publicacion).toISOString().split('T')[0] : '';
     setLibroSeleccionado(libro);
@@ -113,14 +117,14 @@ function GestionLibros() {
         descripcion: libro.descripcion,
         fecha_publicacion: fecha
     });
-    setFile(null); // Limpiar archivo anterior
+    setFile(null);
     onEditModalOpen();
   };
 
   const abrirModalCrear = () => {
     setLibroSeleccionado(null);
     setFormData(initialState);
-    setFile(null); // Limpiar archivo anterior
+    setFile(null);
     onEditModalOpen();
   };
 
@@ -136,7 +140,6 @@ function GestionLibros() {
 
   const handleGuardar = async () => {
     try {
-      // 1. Usamos FormData en lugar de JSON
       const data = new FormData();
       data.append('titulo', formData.titulo);
       data.append('autor', formData.autor);
@@ -145,10 +148,9 @@ function GestionLibros() {
       data.append('fecha_publicacion', formData.fecha_publicacion);
       
       if (file) {
-        data.append('portada', file); // 'portada' debe coincidir con upload.single('portada')
+        data.append('portada', file);
       }
 
-      // Configuración de headers para multipart
       const config = {
         headers: { 
             'Authorization': `Bearer ${token}`,
@@ -177,21 +179,25 @@ function GestionLibros() {
     setCurrentPage(1);
   };
 
-  return (
-    <Box>
-      <HStack justifyContent="space-between" mb={6}>
+ return (
+    <Box maxW="container.xl" mx="auto">
+      
+      <Flex mb={6} justify="space-between" align="center" wrap="wrap" gap={4}>
         <Heading>Gestión de Libros</Heading>
         <Button colorScheme="blue" onClick={abrirModalCrear} leftIcon={<FaPlus />}>
           Crear Nuevo Libro
         </Button>
-      </HStack>
+      </Flex>
 
       <Box mb={6}>
-        <InputGroup w={{ base: '100%', md: '300px' }}>
+        <InputGroup maxW={{ base: '100%', md: '400px' }}>
           <InputLeftElement pointerEvents="none">
             <SearchIcon color="gray.300" />
           </InputLeftElement>
           <Input
+            bg={bgInput}
+            borderColor={borderColor}
+            color={colorTexto}
             placeholder="Buscar por título, autor o categoría..."
             value={busqueda}
             onChange={handleBusquedaChange}
@@ -199,77 +205,98 @@ function GestionLibros() {
         </InputGroup>
       </Box>
 
-      {loading ? (
-        <Box textAlign="center" py={10}><Spinner size="xl" /></Box>
-      ) : !loading && libros.length === 0 ? (
-        <Box textAlign="center" py={10}>
-          <Text fontSize="xl" color="gray.500">
-            {busqueda ? 'No se encontraron libros.' : 'No hay libros registrados.'}
-          </Text>
-        </Box>
-      ) : (
-        <TableContainer>
-          <Table variant="striped">
-            <Thead>
-              <Tr>
-                <Th>ID</Th>
-                <Th>Portada</Th> {/* Nueva columna */}
-                <Th>Título</Th>
-                <Th>Autor</Th>
-                <Th>Acciones</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {libros.map((libro) => (
-                <Tr key={libro.id}>
-                  <Td>{libro.id}</Td>
-                    <Td>
-                      {libro.portada_url ? (
-                      <Image 
-            // Lógica inteligente: Si ya tiene http, úsalo. Si no, agrega localhost.
-            src={libro.portada_url.startsWith('http') ? libro.portada_url : `http://localhost:3000/${libro.portada_url}`} 
-            alt="Portada" 
-            boxSize="50px" 
-            objectFit="cover" 
-            borderRadius="md"
-          />
+      <Box bg={bgTable} color={colorTexto} shadow="sm" borderRadius="lg" borderWidth="1px" borderColor={borderColor} overflow="hidden">
+        
+        {loading ? (
+           <Box textAlign="center" py={10}><Spinner size="xl" /></Box>
+        ) : !loading && libros.length === 0 ? (
+           <Box textAlign="center" py={10}>
+             <Text fontSize="xl" color="gray.500">
+               {busqueda ? 'No se encontraron libros.' : 'No hay libros registrados.'}
+             </Text>
+           </Box>
         ) : (
-          <Text fontSize="xs" color="gray.400">Sin Foto</Text>
+           <Box overflowX="auto">
+             <TableContainer>
+               <Table variant="simple">
+                 <Thead bg={bgHeader}> 
+                   <Tr>
+                     <Th color={colorTexto} borderColor={borderColor}>ID</Th>
+                     <Th color={colorTexto} borderColor={borderColor}>Portada</Th>
+                     <Th color={colorTexto} borderColor={borderColor}>Título</Th>
+                     <Th color={colorTexto} borderColor={borderColor}>Autor</Th>
+                     <Th color={colorTexto} borderColor={borderColor}>Acciones</Th>
+                   </Tr>
+                 </Thead>
+                 <Tbody>
+                   {libros.map((libro) => (
+                     <Tr key={libro.id} _hover={{ bg: bgHover }}> 
+                       <Td borderColor={borderColor}>{libro.id}</Td>
+                       <Td borderColor={borderColor}>
+                         {libro.portada_url ? (
+                           <Image 
+                             src={libro.portada_url.startsWith('http') ? libro.portada_url : `http://localhost:3000/${libro.portada_url}`} 
+                             alt="Portada" 
+                             boxSize="50px" 
+                             objectFit="cover" 
+                             borderRadius="md"
+                             fallbackSrc="https://via.placeholder.com/50?text=?"
+                           />
+                         ) : (
+                           <Flex 
+                             w="50px" h="50px" 
+                             bg={useColorModeValue('gray.100', 'gray.600')} 
+                             borderRadius="md" 
+                             align="center" 
+                             justify="center"
+                           >
+                              <Text fontSize="xs" color="gray.400">N/A</Text>
+                           </Flex>
+                         )}
+                       </Td>
+                       <Td borderColor={borderColor} fontWeight="medium">{libro.titulo}</Td>
+                       <Td borderColor={borderColor}>{libro.autor}</Td>
+                       <Td borderColor={borderColor}>
+                         <HStack spacing={2}>
+                           <Button colorScheme="yellow" variant="solid" size="sm" onClick={() => abrirModalEditar(libro)} leftIcon={<FaEdit />}>
+                              Editar
+                           </Button>
+                           <Button colorScheme="red" variant="ghost" size="sm" onClick={() => abrirAlertaBorrado(libro)} leftIcon={<FaTrash />}>
+                              Borrar
+                           </Button>
+                         </HStack>
+                       </Td>
+                     </Tr>
+                   ))}
+                 </Tbody>
+               </Table>
+             </TableContainer>
+           </Box>
         )}
-      </Td>
-      <Td>{libro.titulo}</Td>
-      <Td>{libro.autor}</Td>
-      <Td>
-        <HStack spacing={2}>
-          <Button colorScheme="yellow" size="sm" onClick={() => abrirModalEditar(libro)} leftIcon={<FaEdit />}>Editar</Button>
-          <Button colorScheme="red" size="sm" onClick={() => abrirAlertaBorrado(libro)} leftIcon={<FaTrash />}>Borrar</Button>
-        </HStack>
-      </Td>
-    </Tr>
-  ))}
-</Tbody>
-          </Table>
-        </TableContainer>
-      )}
 
-      {totalPages > 1 && (
-        <HStack justifyContent="center" mt={10} spacing={4}>
-          <Button onClick={handlePaginaAnterior} isDisabled={currentPage === 1}>Anterior</Button>
-          <Text>Página {currentPage} de {totalPages}</Text>
-          <Button onClick={handlePaginaSiguiente} isDisabled={currentPage === totalPages}>Siguiente</Button>
-        </HStack>
-      )}
+        {totalPages > 1 && (
+           <Flex justify="center" p={4} borderTopWidth="1px" borderColor={borderColor} bg={bgHeader}>
+             <HStack spacing={4}>
+               <Button size="sm" onClick={handlePaginaAnterior} isDisabled={currentPage === 1}>
+                 Anterior
+               </Button>
+               <Text fontSize="sm">Página {currentPage} de {totalPages}</Text>
+               <Button size="sm" onClick={handlePaginaSiguiente} isDisabled={currentPage === totalPages}>
+                 Siguiente
+               </Button>
+             </HStack>
+           </Flex>
+        )}
+      </Box>
 
-      {/* MODAL DE CREAR/EDITAR */}
+      {/* Modales */}
       <Modal isOpen={isEditModalOpen} onClose={onEditModalClose}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent bg={bgTable} color={colorTexto}> 
           <ModalHeader>{libroSeleccionado ? 'Editar Libro' : 'Crear Libro'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>
-              
-              {/* INPUT PARA SUBIR FOTO */}
               <FormControl>
                 <FormLabel>Portada del Libro</FormLabel>
                 <Input 
@@ -277,30 +304,32 @@ function GestionLibros() {
                     accept="image/*" 
                     onChange={handleFileChange} 
                     ref={fileInputRef}
-                    p={1} // Padding pequeño para que se vea bien el input file
+                    p={1} 
+                    bg={bgInput} 
+                    borderColor={borderColor}
                 />
-                <Text fontSize="xs" color="gray.500" mt={1}>Opcional. Deja vacío para mantener la actual.</Text>
+                <Text fontSize="xs" color="gray.500" mt={1}>Opcional.</Text>
               </FormControl>
 
               <FormControl isRequired>
                 <FormLabel>Título</FormLabel>
-                <Input name="titulo" value={formData.titulo} onChange={handleFormChange} />
+                <Input name="titulo" value={formData.titulo} onChange={handleFormChange} bg={bgInput} borderColor={borderColor}/>
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Autor</FormLabel>
-                <Input name="autor" value={formData.autor} onChange={handleFormChange} />
+                <Input name="autor" value={formData.autor} onChange={handleFormChange} bg={bgInput} borderColor={borderColor}/>
               </FormControl>
               <FormControl>
                 <FormLabel>Categoría</FormLabel>
-                <Input name="categoria" value={formData.categoria || ''} onChange={handleFormChange} />
+                <Input name="categoria" value={formData.categoria || ''} onChange={handleFormChange} bg={bgInput} borderColor={borderColor}/>
               </FormControl>
               <FormControl>
                 <FormLabel>Descripción</FormLabel>
-                <Textarea name="descripcion" value={formData.descripcion || ''} onChange={handleFormChange} />
+                <Textarea name="descripcion" value={formData.descripcion || ''} onChange={handleFormChange} bg={bgInput} borderColor={borderColor}/>
               </FormControl>
               <FormControl>
                 <FormLabel>Fecha Publicación</FormLabel>
-                <Input type="date" name="fecha_publicacion" value={formData.fecha_publicacion || ''} onChange={handleFormChange} />
+                <Input type="date" name="fecha_publicacion" value={formData.fecha_publicacion || ''} onChange={handleFormChange} bg={bgInput} borderColor={borderColor}/>
               </FormControl>
             </VStack>
           </ModalBody>
@@ -317,7 +346,7 @@ function GestionLibros() {
         onClose={onDeleteAlertClose}
       >
         <AlertDialogOverlay>
-          <AlertDialogContent>
+          <AlertDialogContent bg={bgTable} color={colorTexto}> {/* Corregido */}
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
               Eliminar Libro
             </AlertDialogHeader>
@@ -334,5 +363,3 @@ function GestionLibros() {
     </Box>
   );
 }
-
-export default GestionLibros;

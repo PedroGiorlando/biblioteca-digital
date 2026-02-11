@@ -8,7 +8,7 @@ import {
   VStack,
   useToast,
   Text,
-  FormErrorMessage, // Para mostrar errores rojos debajo del input
+  FormErrorMessage, 
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
@@ -18,7 +18,7 @@ function Registro() {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); // 1. Nuevo estado
+  const [confirmPassword, setConfirmPassword] = useState(''); 
   const [isLoading, setIsLoading] = useState(false);
   
   // Estados para errores de validación locales

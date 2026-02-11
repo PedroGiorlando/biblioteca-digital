@@ -2,7 +2,6 @@ import {
   Box, Button, FormControl, FormLabel, Input, Heading, VStack, useToast, Text
 } from '@chakra-ui/react';
 
-// 1. Importar useEffect
 import { useState, useEffect } from 'react';
 import { useNavigate, Link as RouterLink} from 'react-router-dom';
 import api from '../services/api';
@@ -38,8 +37,6 @@ function Login() {
         isClosable: true,
       });
 
-      // El navigate('/') de aquí se BORRA
-
     } catch (error: any) {
       console.error('Error en el login:', error);
       toast({
@@ -52,17 +49,15 @@ function Login() {
     }
   };
 
-  // 4. ¡AQUÍ ESTÁ LA MAGIA!
-  // Este Hook "escucha" la variable isAuthenticated
+  // 4. Este Hook "escucha" la variable isAuthenticated
   useEffect(() => {
     // 5. "Cuando isAuthenticated cambie a 'true'..."
     if (isAuthenticated) {
       // 6. "...ENTONCES navega a la página principal."
-      navigate('/');
+      navigate('/catalogo');
     }
   }, [isAuthenticated, navigate]); // 7. Dependencias: se ejecuta si 'isAuthenticated' cambia
 
-  // El JSX (return) es exactamente el mismo
   return (
     <Box maxW='md' mx='auto' mt={10}>
       <Heading textAlign='center' mb={6}>Iniciar Sesión</Heading>

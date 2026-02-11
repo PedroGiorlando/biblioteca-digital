@@ -1,177 +1,172 @@
+import {
+  Box, Heading, Table, Thead, Tbody, Tr, Th, Td,
+  Input, InputGroup, InputLeftElement,
+  Flex, useToast, Spinner, Avatar, Select,
+  HStack, Button, Text, TableContainer, Tag, useColorModeValue
+} from '@chakra-ui/react';
+import { SearchIcon } from '@chakra-ui/icons';
 import { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
-import {
-  Box, Heading, Spinner, Table, Thead, Tbody, Tr, Th, Td, Tag, TableContainer,
-  Select, useToast,
-  // 1. Imports nuevos
-  Input, InputGroup, InputLeftElement, HStack, Button, Text
-} from '@chakra-ui/react';
-import { SearchIcon } from '@chakra-ui/icons'; // Importar ícono
 
-// ... (la 'interface Usuario' es la misma) ...
 interface Usuario {
   id: number;
   nombre: string;
   email: string;
   rol: 'Administrador' | 'Usuario Registrado';
+  foto_url?: string;
 }
 
-function GestionUsuarios() {
-  // --- 2. ESTADOS NUEVOS ---
+export default function GestionUsuarios() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([]);
-  const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState('');
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   const { token, user: adminUser } = useAuth();
   const toast = useToast();
 
-  // --- 3. FETCH ACTUALIZADO ---
-  const fetchUsuarios = async () => {
+  // --- COLORES MODO OSCURO ---
+  const bgTable = useColorModeValue('white', 'gray.800');
+  const colorTexto = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const bgInput = useColorModeValue('white', 'gray.700');
+  const bgHeader = useColorModeValue('gray.50', 'gray.900');
+
+  const cargarUsuarios = async (page = 1, termino = '') => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      params.append('q', busqueda);
-      params.append('page', currentPage.toString());
-
-      const response = await api.get(`/usuarios?${params.toString()}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const res = await api.get('/usuarios', {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { q: termino, page: page } 
       });
 
-      setUsuarios(response.data.usuarios); // Guardamos el array de usuarios
-      setTotalPages(response.data.totalPages); // Guardamos el total de páginas
-
+      if (res.data.usuarios) {
+          setUsuarios(res.data.usuarios);
+          setTotalPages(res.data.totalPages || 1);
+      } else {
+          setUsuarios(Array.isArray(res.data) ? res.data : []);
+      }
     } catch (error) {
-      console.error('Error al cargar usuarios:', error);
-      toast({ title: 'Error al cargar usuarios', status: 'error' });
+      console.error("Error cargando usuarios:", error);
+      toast({ title: 'Error cargando usuarios', status: 'error' });
     } finally {
       setLoading(false);
     }
   };
 
-  // 4. useEffect ACTUALIZADO
   useEffect(() => {
-    if (token) {
-      fetchUsuarios();
-    }
-  }, [token, currentPage, busqueda]); // Se recarga si cambia la pág o la búsqueda
+    cargarUsuarios(currentPage, busqueda);
+  }, [currentPage, busqueda]);
 
-  // --- 5. HANDLERS NUEVOS ---
-  const handleRolChange = async (e: React.ChangeEvent<HTMLSelectElement>, usuarioId: number) => {
-    const nuevoRol = e.target.value;
-    try {
-      await api.put(`/usuarios/${usuarioId}`,
-        { rol: nuevoRol },
-        { headers: { 'Authorization': `Bearer ${token}` } }
-      );
-      toast({ title: 'Rol actualizado', status: 'success' });
-      // No es necesario llamar a fetchUsuarios() aquí,
-      // porque el <Select> ya refleja el estado visualmente.
-      // Pero si quisiéramos recargar toda la data, lo haríamos.
-
-      // Actualicemos solo el estado local para que se vea bien
-      setUsuarios(usuarios.map(u => u.id === usuarioId ? {...u, rol: nuevoRol as any} : u));
-
-    } catch (error: any) {
-      toast({ title: 'Error al cambiar rol', description: error.response?.data?.error, status: 'error' });
-      fetchUsuarios(); // Recarga para revertir el <Select> si falla
-    }
-  };
-
-  const handleBusquedaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBusqueda(e.target.value);
-    setCurrentPage(1); // Resetea a la página 1
+    setCurrentPage(1);
   };
 
-  const handlePaginaSiguiente = () => {
-    setCurrentPage((prevPage) => prevPage + 1);
+  const handlePrevPage = () => setCurrentPage((p) => Math.max(1, p - 1));
+  const handleNextPage = () => setCurrentPage((p) => Math.min(totalPages, p + 1));
+
+  const handleRolChange = async (e: React.ChangeEvent<HTMLSelectElement>, idUsuario: number) => {
+    const nuevoRol = e.target.value;
+    const backupUsuarios = [...usuarios];
+    setUsuarios(usuarios.map(u => u.id === idUsuario ? { ...u, rol: nuevoRol as any } : u));
+
+    try {
+        await api.put(`/usuarios/${idUsuario}`, 
+            { rol: nuevoRol }, 
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+        toast({ title: 'Rol actualizado', status: 'success', duration: 2000 });
+    } catch (error: any) {
+        setUsuarios(backupUsuarios);
+        toast({ title: 'Error al cambiar rol', status: 'error' });
+    }
   };
 
-  const handlePaginaAnterior = () => {
-    setCurrentPage((prevPage) => prevPage - 1);
-  };
-
-  // --- 6. JSX ACTUALIZADO ---
   return (
-    <Box>
+    <Box maxW="container.xl" mx="auto">
       <Heading mb={6}>Gestión de Usuarios</Heading>
 
-      {/* NUEVA BARRA DE BÚSQUEDA */}
-      <Box mb={6}>
-        <InputGroup w={{ base: '100%', md: '300px' }}>
+      <Flex mb={6} justify="space-between" align="center" wrap="wrap" gap={4}>
+        <InputGroup maxW="400px">
           <InputLeftElement pointerEvents="none">
             <SearchIcon color="gray.300" />
           </InputLeftElement>
-          <Input
-            placeholder="Buscar por nombre o email..."
+          <Input 
+            type="text" 
+            placeholder="Buscar por nombre o email..." 
             value={busqueda}
-            onChange={handleBusquedaChange}
+            onChange={handleSearchChange}
+            bg={bgInput}
+            borderColor={borderColor}
+            color={colorTexto}
           />
         </InputGroup>
-      </Box>
+      </Flex>
 
-      {/* Lógica de Carga / Vacío */}
-      {loading ? (
-        <Box textAlign="center" py={10}><Spinner size="xl" /></Box>
-      ) : !loading && usuarios.length === 0 ? (
-        <Box textAlign="center" py={10}>
-          <Text fontSize="xl" color="gray.500">
-            {busqueda ? 'No se encontraron usuarios.' : 'No hay usuarios registrados.'}
-          </Text>
-        </Box>
-      ) : (
-        // Tabla de Usuarios
+      <Box overflowX="auto" borderWidth="1px" borderRadius="lg" bg={bgTable} color={colorTexto} borderColor={borderColor} shadow="sm">
         <TableContainer>
-          <Table variant="striped">
-            {/* ... (Thead es igual) ... */}
-            <Thead>
-              <Tr>
-                <Th>ID</Th>
-                <Th>Nombre</Th>
-                <Th>Email</Th>
-                <Th>Rol</Th>
-              </Tr>
+            <Table variant="simple">
+            <Thead bg={bgHeader}> 
+                <Tr>
+                <Th color={colorTexto} borderColor={borderColor}>Usuario</Th>
+                <Th color={colorTexto} borderColor={borderColor}>Email</Th>
+                <Th color={colorTexto} borderColor={borderColor}>Rol</Th>
+                </Tr>
             </Thead>
             <Tbody>
-              {usuarios.map((usuario) => (
-                <Tr key={usuario.id}>
-                  <Td>{usuario.id}</Td>
-                  <Td>{usuario.nombre}</Td>
-                  <Td>{usuario.email}</Td>
-                  <Td>
-                    {adminUser?.id === usuario.id ? (
-                      <Tag colorScheme="cyan">{usuario.rol} (Tú)</Tag>
-                    ) : (
-                      <Select
-                        value={usuario.rol}
-                        onChange={(e) => handleRolChange(e, usuario.id)}
-                        size="sm"
-                        w="200px"
-                      >
-                        <option value="Usuario Registrado">Usuario Registrado</option>
-                        <option value="Administrador">Administrador</option>
-                      </Select>
-                    )}
-                  </Td>
-                </Tr>
-              ))}
+                {loading ? (
+                    <Tr><Td colSpan={3} textAlign="center" py={10}><Spinner size="xl" /></Td></Tr>
+                ) : (
+                    usuarios.map((u) => (
+                    <Tr key={u.id}>
+                        <Td borderColor={borderColor}>
+                            <Flex align="center">
+                                <Avatar size="sm" name={u.nombre} src={u.foto_url} mr={3} />
+                                <Text fontWeight="medium">{u.nombre}</Text>
+                            </Flex>
+                        </Td>
+                        <Td borderColor={borderColor}>{u.email}</Td>
+                        <Td borderColor={borderColor}>
+                            {adminUser?.id === u.id ? (
+                                <Tag colorScheme="purple" size="md">Tú (Admin)</Tag>
+                            ) : (
+                                <Select 
+                                    size="sm" 
+                                    value={u.rol} 
+                                    onChange={(e) => handleRolChange(e, u.id)}
+                                    maxW="150px"
+                                    bg={bgInput} 
+                                    borderColor={borderColor}
+                                    color={colorTexto}
+                                >
+                                    <option value="Usuario Registrado">Usuario</option>
+                                    <option value="Administrador">Administrador</option>
+                                </Select>
+                            )}
+                        </Td>
+                    </Tr>
+                    ))
+                )}
+                {!loading && usuarios.length === 0 && (
+                    <Tr><Td colSpan={3} textAlign="center" py={10}>No se encontraron usuarios.</Td></Tr>
+                )}
             </Tbody>
-          </Table>
+            </Table>
         </TableContainer>
-      )}
+      </Box>
 
-      {/* NUEVA PAGINACIÓN */}
       {totalPages > 1 && (
-        <HStack justifyContent="center" mt={10} spacing={4}>
-          <Button onClick={handlePaginaAnterior} isDisabled={currentPage === 1}>
+        <HStack justifyContent="center" mt={6} spacing={4}>
+          <Button onClick={handlePrevPage} isDisabled={currentPage === 1} size="sm">
             Anterior
           </Button>
-          <Text>
+          <Text fontSize="sm" color="gray.600">
             Página {currentPage} de {totalPages}
           </Text>
-          <Button onClick={handlePaginaSiguiente} isDisabled={currentPage === totalPages}>
+          <Button onClick={handleNextPage} isDisabled={currentPage === totalPages} size="sm">
             Siguiente
           </Button>
         </HStack>
@@ -179,5 +174,3 @@ function GestionUsuarios() {
     </Box>
   );
 }
-
-export default GestionUsuarios;

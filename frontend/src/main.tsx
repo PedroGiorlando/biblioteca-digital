@@ -2,90 +2,100 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
-import RutaAdmin from './components/RutaAdmin.tsx';
-import AdminLayout from './pages/admin/AdminLayout.tsx';
-import GestionUsuarios from './pages/admin/GestionUsuarios.tsx';
-import GestionPrestamos from './pages/admin/GestionPrestamos.tsx';
-import Reportes from './pages/admin/Reportes.tsx';
-import GestionLibros from './pages/admin/GestionLibros.tsx';
+
+import {AuthProvider} from './context/AuthContext.tsx' 
 import theme from './Theme.ts';
-import Dashboard from './pages/admin/Dashboard.tsx';
-
-import RutaProtegida from './components/RutaProtegida.tsx';
-
-// 1. IMPORTAR EL AUTH PROVIDER
-import { AuthProvider } from './context/AuthContext.tsx'
-
 import App from './App.tsx'
+
+// Rutas Públicas
 import Login from './pages/Login.tsx'
 import Registro from './pages/Registro.tsx'
-import MisPrestamos from './pages/MisPrestamos.tsx';
+import RecuperarPassword from './pages/RecuperarPassword.tsx';
+import Home from './pages/Home.tsx'; 
 import Catalogo from './pages/Catalogo.tsx';
 import LibroDetalle from './pages/LibroDetalle.tsx';
-import RecuperarPassword from './pages/RecuperarPassword.tsx';
+import MiBiblioteca from './pages/MiBiblioteca.tsx';
+import Lector from './pages/Lector';
 import MiPerfil from './pages/MiPerfil.tsx';
 import ListaDeseados from './pages/ListaDeseados.tsx';
+
+// Rutas Admin
+import RutaAdmin from './components/RutaAdmin.tsx';
+import AdminLayout from './pages/admin/AdminLayout.tsx';
+import Dashboard from './pages/admin/Dashboard.tsx';
+import GestionUsuarios from './pages/admin/GestionUsuarios.tsx';
+import GestionVentas from './pages/admin/GestionVentas.tsx';
+import Reportes from './pages/admin/Reportes.tsx';
+import GestionLibros from './pages/admin/GestionLibros.tsx';
+
+// Seguridad
+import RutaProtegida from './components/RutaProtegida.tsx';
+
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />, // App (Layout) es el padre
+    element: <App />, // App contiene el Navbar y el Outlet
     children: [
-      // Rutas públicas
+      
+      // 1. LA NUEVA PORTADA (LANDING PAGE)
+      {
+        index: true, 
+        element: <Home />, 
+      },
+
+      // 2. EL CATÁLOGO AHORA TIENE SU PROPIA RUTA
+      {
+        path: '/catalogo',
+        element: <Catalogo />,
+      },
+
+      // 3. DETALLE DEL LIBRO
+      {
+        path: '/libro/:id',
+        element: <LibroDetalle />,
+      },
+
+      // --- RUTAS DE ACCESO ---
       { path: '/login', element: <Login /> },
       { path: '/registro', element: <Registro /> },
       { path: '/recuperar', element: <RecuperarPassword /> },
 
-      // ¡NUEVA RUTA PROTEGIDA!
+      // --- RUTAS PROTEGIDAS (USUARIOS LOGUEADOS) ---
       {
-        path: '/mis-prestamos',
-        element: (
-          <RutaProtegida>
-            <MisPrestamos />
-          </RutaProtegida>
-        ),
+        path: '/mi-biblioteca',
+        element: <RutaProtegida><MiBiblioteca /></RutaProtegida>,
       },
       {
-        path: '/perfil', // <--- ¡AQUÍ ES EL LUGAR CORRECTO! (Fuera de admin)
-        element: (
-          <RutaProtegida>
-            <MiPerfil />
-          </RutaProtegida>
-        ),
-        
+        path: '/leer/:id',
+        element: <RutaProtegida><Lector /></RutaProtegida>,
       },
-      { path: '/deseados', element: <RutaProtegida><ListaDeseados /></RutaProtegida> },
-      // --- ¡NUEVO! SECCIÓN DE RUTAS DE ADMIN ---
+      {
+        path: '/perfil', 
+        element: <RutaProtegida><MiPerfil /></RutaProtegida>,
+      },
+      { 
+        path: '/deseados', 
+        element: <RutaProtegida><ListaDeseados /></RutaProtegida> 
+      },
+
+      // --- SECCIÓN DE RUTAS DE ADMIN ---
       {
         path: '/admin',
         element: (
-          <RutaProtegida> {/* 1er Guardia: ¿Logueado? */}
-            <RutaAdmin>    {/* 2do Guardia: ¿Admin? */}
-              <AdminLayout /> {/* Si pasa, muestra el Layout de Admin */}
+          <RutaProtegida>
+            <RutaAdmin>
+              <AdminLayout />
             </RutaAdmin>
           </RutaProtegida>
         ),
-        // Rutas hijas que se renderizan DENTRO del <AdminLayout>
         children: [
           { index: true, element: <Dashboard /> },
           { path: 'usuarios', element: <GestionUsuarios /> },
-          { path: 'prestamos', element: <GestionPrestamos /> },
+          { path: 'ventas', element: <GestionVentas /> },
           { path: 'reportes', element: <Reportes /> },
           { path: 'libros', element: <GestionLibros /> },
-          
         ],
-      },
-      {
-        path: '/', // La página de inicio será el catálogo
-        element: <Catalogo />,
-      },
-      {
-        path: '/catalogo', // Ruta alternativa para el catálogo
-        element: <Catalogo />,
-      },
-      {
-        path: '/libro/:id', // Ruta para ver un libro específico
-        element: <LibroDetalle />,
       },
     ],
   },
