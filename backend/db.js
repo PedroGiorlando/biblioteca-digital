@@ -1,14 +1,23 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
+require('dotenv').config(); 
 
-// Creamos un "pool" de conexiones.
-// Es más eficiente que crear una conexión nueva cada vez.
 const pool = mysql.createPool({
-    host: 'localhost',      
-    user: 'root',         
-    password: 'root', 
-    database: 'biblioteca_digital' 
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-// Exportamos una versión del pool que usa "promesas"
-// Esto hará nuestro código mucho más limpio en el futuro.
-module.exports = pool.promise();
+pool.getConnection()
+    .then(connection => {
+        pool.releaseConnection(connection);
+        console.log('✅ Base de datos conectada exitosamente');
+    })
+    .catch(err => {
+        console.error('❌ Error conectando a la BD:', err.message);
+    });
+
+module.exports = pool;

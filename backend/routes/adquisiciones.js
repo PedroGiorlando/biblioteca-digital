@@ -13,14 +13,20 @@ router.post('/comprar', verificarToken, async (req, res) => {
 
     try {
         for (const item of items) {
+            // Verificar si ya lo tiene comprado
             const [existe] = await db.query('SELECT * FROM Adquisiciones WHERE id_usuario = ? AND id_libro = ?', [id_usuario, item.id]);
+            
             if (existe.length === 0) {
-                // Guardamos precio, usuario y libro
+                // 1. Guardamos la compra (INSERT)
                 await db.query('INSERT INTO Adquisiciones (id_usuario, id_libro, monto_pagado) VALUES (?, ?, ?)', [id_usuario, item.id, item.precio]);
+
+                // 2. 🔥 NUEVO: Borramos de la lista de Deseados automáticamente
+                await db.query('DELETE FROM Deseados WHERE id_usuario = ? AND id_libro = ?', [id_usuario, item.id]);
             }
         }
         res.status(201).json({ mensaje: 'Compra exitosa' });
     } catch (error) {
+        console.error(error); // Agregué el console.error para que veas si algo falla
         res.status(500).json({ error: 'Error en la compra' });
     }
 });

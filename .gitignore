@@ -10,3 +10,4 @@ Thumbs.db
 # Ignorar uploads especificamente
 backend/uploads/
 **/uploads/
+backend/.env
