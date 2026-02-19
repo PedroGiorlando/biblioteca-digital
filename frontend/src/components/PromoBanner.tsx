@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Button, Icon, CloseButton, useColorModeValue, Container, ScaleFade } from '@chakra-ui/react';
+import { Box, Flex, Text, Button, Icon, CloseButton, Container, ScaleFade } from '@chakra-ui/react';
 import { FaGift, FaPercentage } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';

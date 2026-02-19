@@ -1,6 +1,6 @@
 import {
   Box, Heading, Text, Button, Stack, Container, SimpleGrid, Icon, Flex,
-  useColorModeValue, Image, VStack
+  useColorModeValue, Image
 } from '@chakra-ui/react';
 import { FaBolt, FaLock, FaBookOpen, FaArrowRight } from 'react-icons/fa';
 import { Link as RouterLink } from 'react-router-dom';

@@ -1,6 +1,5 @@
 import {
-  Box, SimpleGrid, Stat, StatLabel, StatNumber, StatHelpText,
-  StatArrow, Icon, Flex, useColorModeValue, Heading, Spinner
+  Box, SimpleGrid, Stat, StatLabel, StatNumber, Flex, useColorModeValue, Heading, Spinner
 } from '@chakra-ui/react';
 import { FiUsers, FiBook, FiDollarSign, FiShoppingCart } from 'react-icons/fi'; 
 import { useEffect, useState } from 'react';

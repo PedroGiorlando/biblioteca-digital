@@ -27,7 +27,6 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // 4. Efecto que se ejecuta UNA VEZ al cargar la app
   // Revisa el localStorage para ver si ya estábamos logueados
@@ -38,7 +37,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (storedToken && storedUser) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
     }
   }, []);
  const actualizarUsuario = (datosNuevos: any) => {
@@ -60,7 +58,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('usuario', JSON.stringify(newUser));
     setToken(newToken);
     setUser(newUser);
-    setIsAuthenticated(true);
   };
 
   // 6. Función de Logout: limpia el estado Y el localStorage
@@ -69,7 +66,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('usuario');
     setToken(null);
     setUser(null);
-    setIsAuthenticated(false);
   };
 
 return (

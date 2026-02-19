@@ -34,7 +34,6 @@ export default function Reportes() {
   if (loading) return <Flex justify="center" mt={10}><Spinner size="xl" /></Flex>;
 
   const maxVentas = Math.max(...topLibros.map((l: any) => l.total_ventas), 1);
-  const maxGasto = Math.max(...topUsuarios.map((u: any) => u.total_gastado), 1);
 
   return (
     <Box maxW="container.xl" mx="auto">

@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import LibroCard from '../components/LibroCard';
 import { useAuth } from '../context/AuthContext';
-import PromoBanner from '../components/PromoBanner';
 
 interface Libro {
   id: number;

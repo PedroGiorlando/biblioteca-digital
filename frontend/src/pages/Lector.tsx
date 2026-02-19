@@ -4,11 +4,10 @@ import api from '../services/api';
 import {
   Box, Container, Text, Heading, Button, HStack, VStack,
   Slider, SliderTrack, SliderFilledTrack, SliderThumb,
-  IconButton, useToast, Menu, MenuButton, MenuList, MenuItem,
+  IconButton,  Menu, MenuButton, MenuList,
   Progress, Flex, Spinner
 } from '@chakra-ui/react';
 import { ArrowBackIcon, ChevronLeftIcon, ChevronRightIcon, SettingsIcon } from '@chakra-ui/icons';
-import { FaFont } from 'react-icons/fa';
 
 // --- TEXTO SIMULADO ---
 // Generamos párrafos largos para simular el contenido de un libro

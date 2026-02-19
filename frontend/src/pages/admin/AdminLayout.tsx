@@ -1,14 +1,14 @@
 import {
-  IconButton, Avatar, Box, CloseButton, Flex, HStack,
-  VStack, Icon, useColorModeValue, Text, Drawer,
-  DrawerContent, useDisclosure, Menu, MenuButton, MenuList, MenuItem, MenuDivider
+  IconButton,  Box, CloseButton, Flex,
+ Icon, useColorModeValue, Text, Drawer,
+  DrawerContent, useDisclosure
 } from '@chakra-ui/react';
 import {
-  FiHome, FiUsers, FiSettings, FiMenu, FiBell, 
-  FiChevronDown, FiBook, FiDollarSign, FiBarChart2 
+  FiHome, FiUsers, FiMenu,  
+ FiBook, FiDollarSign, FiBarChart2 
 } from 'react-icons/fi'; 
-import { Outlet, Link as RouterLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { Outlet, Link as RouterLink } from 'react-router-dom';
+
 
 const LinkItems = [
   { name: 'Dashboard', icon: FiHome, path: '/admin' },
@@ -105,7 +105,6 @@ const NavItem = ({ icon, children, path, ...rest }: any) => {
 };
 
 const MobileNav = ({ onOpen, ...rest }: any) => {
-    const navigate = useNavigate();
 
     return (
       <Flex

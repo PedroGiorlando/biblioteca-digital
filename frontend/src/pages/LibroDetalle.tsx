@@ -5,7 +5,7 @@ import {
   Box, Heading, Text, Image, Spinner, Alert, AlertIcon, SimpleGrid, Tag, Stack,
   Button, useToast, Icon, Divider, VStack, Textarea, Avatar, HStack, IconButton, Tooltip,
   useColorModeValue, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton,
-  AspectRatio, Radio, RadioGroup, Badge, Checkbox 
+  AspectRatio, Radio, RadioGroup, Checkbox 
 } from '@chakra-ui/react';
 import { useAuth } from '../context/AuthContext';
 import { FaBook, FaHeart, FaRegHeart, FaStar, FaCreditCard, FaLock, FaShieldAlt } from 'react-icons/fa';
