@@ -7,8 +7,8 @@ import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
 interface StatsData {
-  totalUsuarios: number;
-  totalLibros: number;
+  totalusuarios: number;
+  totallibros: number;
   totalVentas: number;
   gananciasTotales: number;
 }
@@ -56,7 +56,7 @@ export default function Dashboard() {
 
         {/* TARJETA 2: VENTAS */}
         <StatCard
-          title={'Libros Vendidos'}
+          title={'libros Vendidos'}
           stat={stats?.totalVentas || 0}
           icon={<FiShoppingCart size={'3em'} />}
           bg={bgCard}
@@ -65,8 +65,8 @@ export default function Dashboard() {
 
         {/* TARJETA 3: USUARIOS */}
         <StatCard
-          title={'Usuarios Registrados'}
-          stat={stats?.totalUsuarios || 0}
+          title={'usuarios Registrados'}
+          stat={stats?.totalusuarios || 0}
           icon={<FiUsers size={'3em'} />}
           bg={bgCard}
           color="purple.400"
@@ -74,8 +74,8 @@ export default function Dashboard() {
 
         {/* TARJETA 4: CATALOGO */}
         <StatCard
-          title={'Libros Activos'}
-          stat={stats?.totalLibros || 0}
+          title={'libros Activos'}
+          stat={stats?.totallibros || 0}
           icon={<FiBook size={'3em'} />}
           bg={bgCard}
           color="orange.400"

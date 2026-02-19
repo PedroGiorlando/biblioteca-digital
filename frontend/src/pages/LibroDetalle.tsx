@@ -38,7 +38,7 @@ interface Resena {
 function LibroDetalle() {
   // --- ESTADOS ---
   const [libro, setLibro] = useState<Libro | null>(null);
-  const [resenas, setResenas] = useState<Resena[]>([]);
+  const [resenas, setresenas] = useState<Resena[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [relacionados, setRelacionados] = useState<Libro[]>([]);
@@ -95,8 +95,8 @@ function LibroDetalle() {
 
         // 2. Cargar Reseñas
         try {
-            const resResenas = await api.get(`/resenas/${id}`);
-            setResenas(resResenas.data);
+            const resresenas = await api.get(`/resenas/${id}`);
+            setresenas(resresenas.data);
         } catch (e) { console.error("Error reseñas", e); }
 
         // 3. Cargar RELACIONADOS
@@ -200,7 +200,7 @@ function LibroDetalle() {
         setNuevoComentario('');
         setNuevaCalificacion(0);
         const res = await api.get(`/resenas/${id}`);
-        setResenas(res.data);
+        setresenas(res.data);
     } catch (error: any) {
         toast({ title: 'Error', description: error.response?.data?.error, status: 'error' });
     } finally {
@@ -256,7 +256,7 @@ function LibroDetalle() {
               {isAuthenticated && !loTengo && (
                 <Tooltip label={esDeseado ? "Quitar de deseados" : "Agregar a deseados"}>
                   <IconButton
-                    aria-label="Deseados" 
+                    aria-label="deseados" 
                     icon={esDeseado ? <Icon as={FaHeart} color="red.500" /> : <Icon as={FaRegHeart} />}
                     size="lg" 
                     variant="outline" 
@@ -272,7 +272,7 @@ function LibroDetalle() {
 
       <Divider mb={10} borderColor={borderColor} />
 
-      {/* --- SECCIÓN NUEVA: LIBROS RELACIONADOS (USANDO TU LIBROCARD) --- */}
+      {/* --- SECCIÓN NUEVA: libros RELACIONADOS (USANDO TU LIBROCARD) --- */}
       {relacionados.length > 0 && (
         <Box mb={16}>
             <Heading size="lg" mb={6}>También te podría interesar</Heading>

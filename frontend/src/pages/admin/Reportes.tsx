@@ -7,21 +7,21 @@ import api from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Reportes() {
-  const [topLibros, setTopLibros] = useState<any[]>([]);
-  const [topUsuarios, setTopUsuarios] = useState<any[]>([]);
+  const [toplibros, setToplibros] = useState<any[]>([]);
+  const [topusuarios, setTopusuarios] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { token } = useAuth();
 
   useEffect(() => {
     const cargarReportes = async () => {
       try {
-        const [resLibros, resUsuarios] = await Promise.all([
+        const [reslibros, resusuarios] = await Promise.all([
             api.get('/admin/reportes/top-libros', { headers: { Authorization: `Bearer ${token}` } }),
             api.get('/admin/reportes/top-usuarios', { headers: { Authorization: `Bearer ${token}` } })
         ]);
 
-        setTopLibros(resLibros.data);
-        setTopUsuarios(resUsuarios.data);
+        setToplibros(reslibros.data);
+        setTopusuarios(resusuarios.data);
       } catch (error) {
         console.error("Error cargando reportes", error);
       } finally {
@@ -33,7 +33,7 @@ export default function Reportes() {
 
   if (loading) return <Flex justify="center" mt={10}><Spinner size="xl" /></Flex>;
 
-  const maxVentas = Math.max(...topLibros.map((l: any) => l.total_ventas), 1);
+  const maxVentas = Math.max(...toplibros.map((l: any) => l.total_ventas), 1);
 
   return (
     <Box maxW="container.xl" mx="auto">
@@ -41,15 +41,15 @@ export default function Reportes() {
 
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
         
-        {/* --- REPORTE 1: LIBROS MÁS VENDIDOS --- */}
+        {/* --- REPORTE 1: libros MÁS VENDIDOS --- */}
         <Card shadow="md" borderWidth="1px">
           <CardHeader>
             <Heading size="md">📚 Best Sellers (Top 5)</Heading>
-            <Text fontSize="sm" color="gray.500">Libros con mayor volumen de ventas</Text>
+            <Text fontSize="sm" color="gray.500">libros con mayor volumen de ventas</Text>
           </CardHeader>
           <CardBody>
             <VStack spacing={6} align="stretch">
-              {topLibros.map((libro, index) => (
+              {toplibros.map((libro, index) => (
                 <Box key={index}>
                   <Flex justify="space-between" mb={1}>
                     <Text fontWeight="bold" noOfLines={1}>{libro.titulo}</Text>
@@ -67,7 +67,7 @@ export default function Reportes() {
                   </Text>
                 </Box>
               ))}
-              {topLibros.length === 0 && <Text>No hay datos de ventas aún.</Text>}
+              {toplibros.length === 0 && <Text>No hay datos de ventas aún.</Text>}
             </VStack>
           </CardBody>
         </Card>
@@ -76,11 +76,11 @@ export default function Reportes() {
         <Card shadow="md" borderWidth="1px">
           <CardHeader>
             <Heading size="md">💎 Clientes VIP (Top 5)</Heading>
-            <Text fontSize="sm" color="gray.500">Usuarios que más han invertido</Text>
+            <Text fontSize="sm" color="gray.500">usuarios que más han invertido</Text>
           </CardHeader>
           <CardBody>
             <VStack spacing={4} align="stretch">
-              {topUsuarios.map((usuario, index) => (
+              {topusuarios.map((usuario, index) => (
                 <HStack key={index} p={3} borderWidth="1px" borderRadius="md" justify="space-between">
                   <HStack>
                     <Avatar name={usuario.nombre} size="sm" bg="purple.500" color="white" />
@@ -98,7 +98,7 @@ export default function Reportes() {
                   </Box>
                 </HStack>
               ))}
-              {topUsuarios.length === 0 && <Text>No hay clientes VIP aún.</Text>}
+              {topusuarios.length === 0 && <Text>No hay clientes VIP aún.</Text>}
             </VStack>
           </CardBody>
         </Card>

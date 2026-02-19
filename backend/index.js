@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-const usuariosRoutes = require('./routes/usuarios');      // Login, Perfil, Usuarios
+const usuariosRoutes = require('./routes/usuarios');      // Login, Perfil, usuarios
 const librosRoutes = require('./routes/libros');          // Catálogo y Gestión
 const resenasRoutes = require('./routes/resenas');        // Opiniones
 const adquisicionesRoutes = require('./routes/adquisiciones'); // Compras (El corazón del negocio)

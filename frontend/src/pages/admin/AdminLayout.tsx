@@ -12,8 +12,8 @@ import { Outlet, Link as RouterLink } from 'react-router-dom';
 
 const LinkItems = [
   { name: 'Dashboard', icon: FiHome, path: '/admin' },
-  { name: 'Usuarios', icon: FiUsers, path: '/admin/usuarios' },
-  { name: 'Libros', icon: FiBook, path: '/admin/libros' },
+  { name: 'usuarios', icon: FiUsers, path: '/admin/usuarios' },
+  { name: 'libros', icon: FiBook, path: '/admin/libros' },
   { name: 'Ventas', icon: FiDollarSign, path: '/admin/ventas' }, 
   { name: 'Reportes', icon: FiBarChart2, path: '/admin/reportes' },
 ];
@@ -41,7 +41,7 @@ export default function AdminLayout() {
       
       {/* Contenido Principal */}
       <Box ml={{ base: 0, md: 60 }} p="4">
-        <Outlet /> {/* Aquí se renderizan las páginas hijas (Dashboard, Usuarios, etc) */}
+        <Outlet /> {/* Aquí se renderizan las páginas hijas (Dashboard, usuarios, etc) */}
       </Box>
     </Box>
   );

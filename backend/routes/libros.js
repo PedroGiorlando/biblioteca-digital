@@ -6,7 +6,7 @@ const path = require('path');
 const verificarToken = require('../middleware/authMiddleware');
 const verificarAdmin = require('../middleware/adminMiddleware');
 
-// Configuración de Multer para LIBROS
+// Configuración de Multer para libros
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'uploads/'),
     filename: (req, file, cb) => {
@@ -39,12 +39,12 @@ router.get('/', async (req, res) => {
             params.push(categoria);
         }
 
-        const sqlCount = `SELECT COUNT(*) AS totalLibros FROM Libros${whereClause}`;
+        const sqlCount = `SELECT COUNT(*) AS totallibros FROM libros${whereClause}`;
         const [ [countResult] ] = await db.query(sqlCount, params);
-        const totalLibros = countResult.totalLibros;
-        const totalPages = Math.ceil(totalLibros / limit);
+        const totallibros = countResult.totallibros;
+        const totalPages = Math.ceil(totallibros / limit);
 
-        const sqlSelect = `SELECT * FROM Libros${whereClause} ORDER BY titulo LIMIT ? OFFSET ?`;
+        const sqlSelect = `SELECT * FROM libros${whereClause} ORDER BY titulo LIMIT ? OFFSET ?`;
         const paramsSelect = [...params, limit, offset];
         const [libros] = await db.query(sqlSelect, paramsSelect);
 
@@ -57,7 +57,7 @@ router.get('/', async (req, res) => {
 // GET /:id (Detalle)
 router.get('/:id', async (req, res) => {
     try {
-        const [libros] = await db.query('SELECT * FROM Libros WHERE id = ? AND activo = TRUE', [req.params.id]);
+        const [libros] = await db.query('SELECT * FROM libros WHERE id = ? AND activo = TRUE', [req.params.id]);
         if (libros.length === 0) return res.status(404).json({ error: 'Libro no encontrado' });
         res.json(libros[0]);
     } catch (error) {
@@ -73,7 +73,7 @@ router.post('/', [verificarToken, verificarAdmin, upload.single('portada')], asy
         if (req.file) portada_url = req.file.path.replace(/\\/g, "/");
 
         const [result] = await db.query(
-            'INSERT INTO Libros (titulo, autor, categoria, descripcion, fecha_publicacion, portada_url) VALUES (?, ?, ?, ?, ?, ?)',
+            'INSERT INTO libros (titulo, autor, categoria, descripcion, fecha_publicacion, portada_url) VALUES (?, ?, ?, ?, ?, ?)',
             [titulo, autor, categoria || null, descripcion || null, fecha_publicacion || null, portada_url]
         );
         res.status(201).json({ mensaje: 'Libro creado', idLibro: result.insertId });
@@ -89,7 +89,7 @@ router.put('/:id', [verificarToken, verificarAdmin, upload.single('portada')], a
         let portada_url = null;
         if (req.file) portada_url = req.file.path.replace(/\\/g, "/");
 
-        let sql = 'UPDATE Libros SET titulo=?, autor=?, categoria=?, descripcion=?, fecha_publicacion=?';
+        let sql = 'UPDATE libros SET titulo=?, autor=?, categoria=?, descripcion=?, fecha_publicacion=?';
         const params = [titulo, autor, categoria, descripcion, fecha_publicacion || null];
         if (portada_url) {
             sql += ', portada_url=?';
@@ -107,7 +107,7 @@ router.put('/:id', [verificarToken, verificarAdmin, upload.single('portada')], a
 
 // DELETE /:id (Borrar lógico - Admin)
 router.delete('/:id', [verificarToken, verificarAdmin], async (req, res) => {
-    await db.query('UPDATE Libros SET activo = FALSE WHERE id = ?', [req.params.id]);
+    await db.query('UPDATE libros SET activo = FALSE WHERE id = ?', [req.params.id]);
     res.json({ mensaje: 'Libro eliminado logicamente' });
 });
 
@@ -117,7 +117,7 @@ router.get('/:id/relacionados', async (req, res) => {
         const { id } = req.params;
 
         // 1. Primero averiguamos la categoría del libro actual
-        const [libroActual] = await db.query('SELECT categoria FROM Libros WHERE id = ?', [id]);
+        const [libroActual] = await db.query('SELECT categoria FROM libros WHERE id = ?', [id]);
         
         if (libroActual.length === 0) return res.status(404).json({ error: 'Libro no encontrado' });
         
@@ -126,7 +126,7 @@ router.get('/:id/relacionados', async (req, res) => {
         // 2. Buscamos otros libros de esa misma categoría, EXCLUYENDO el actual
         // LIMIT 3 para no saturar
         const sql = `
-            SELECT * FROM Libros 
+            SELECT * FROM libros 
             WHERE categoria = ? AND id != ? AND activo = TRUE 
             ORDER BY RAND() 
             LIMIT 3

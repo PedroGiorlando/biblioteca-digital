@@ -27,7 +27,7 @@ function Sidebar() {
         </Heading>
         
         <Link as={RouterLink} to="/admin/usuarios" fontWeight="medium" _hover={{ color: hoverColor, textDecoration: 'none' }}>
-          Gestión de Usuarios
+          Gestión de usuarios
         </Link>
         
         <Link as={RouterLink} to="/admin/prestamos" fontWeight="medium" _hover={{ color: hoverColor, textDecoration: 'none' }}>
@@ -35,7 +35,7 @@ function Sidebar() {
         </Link>
         
         <Link as={RouterLink} to="/admin/libros" fontWeight="medium" _hover={{ color: hoverColor, textDecoration: 'none' }}>
-          Gestión de Libros
+          Gestión de libros
         </Link>
         
         <Link as={RouterLink} to="/admin/reportes" fontWeight="medium" _hover={{ color: hoverColor, textDecoration: 'none' }}>

@@ -17,16 +17,16 @@ import LibroDetalle from './pages/LibroDetalle.tsx';
 import MiBiblioteca from './pages/MiBiblioteca.tsx';
 import Lector from './pages/Lector';
 import MiPerfil from './pages/MiPerfil.tsx';
-import ListaDeseados from './pages/ListaDeseados.tsx';
+import Listadeseados from './pages/Listadeseados.tsx';
 
 // Rutas Admin
 import RutaAdmin from './components/RutaAdmin.tsx';
 import AdminLayout from './pages/admin/AdminLayout.tsx';
 import Dashboard from './pages/admin/Dashboard.tsx';
-import GestionUsuarios from './pages/admin/GestionUsuarios.tsx';
+import Gestionusuarios from './pages/admin/Gestionusuarios.tsx';
 import GestionVentas from './pages/admin/GestionVentas.tsx';
 import Reportes from './pages/admin/Reportes.tsx';
-import GestionLibros from './pages/admin/GestionLibros.tsx';
+import Gestionlibros from './pages/admin/Gestionlibros.tsx';
 
 // Seguridad
 import RutaProtegida from './components/RutaProtegida.tsx';
@@ -76,7 +76,7 @@ const router = createBrowserRouter([
       },
       { 
         path: '/deseados', 
-        element: <RutaProtegida><ListaDeseados /></RutaProtegida> 
+        element: <RutaProtegida><Listadeseados /></RutaProtegida> 
       },
 
       // --- SECCIÓN DE RUTAS DE ADMIN ---
@@ -91,10 +91,10 @@ const router = createBrowserRouter([
         ),
         children: [
           { index: true, element: <Dashboard /> },
-          { path: 'usuarios', element: <GestionUsuarios /> },
+          { path: 'usuarios', element: <Gestionusuarios /> },
           { path: 'ventas', element: <GestionVentas /> },
           { path: 'reportes', element: <Reportes /> },
-          { path: 'libros', element: <GestionLibros /> },
+          { path: 'libros', element: <Gestionlibros /> },
         ],
       },
     ],

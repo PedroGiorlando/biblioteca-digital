@@ -17,8 +17,8 @@ interface Usuario {
   foto_url?: string;
 }
 
-export default function GestionUsuarios() {
-  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+export default function Gestionusuarios() {
+  const [usuarios, setusuarios] = useState<Usuario[]>([]);
   const [busqueda, setBusqueda] = useState('');
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,7 +34,7 @@ export default function GestionUsuarios() {
   const bgInput = useColorModeValue('white', 'gray.700');
   const bgHeader = useColorModeValue('gray.50', 'gray.900');
 
-  const cargarUsuarios = async (page = 1, termino = '') => {
+  const cargarusuarios = async (page = 1, termino = '') => {
     setLoading(true);
     try {
       const res = await api.get('/usuarios', {
@@ -43,10 +43,10 @@ export default function GestionUsuarios() {
       });
 
       if (res.data.usuarios) {
-          setUsuarios(res.data.usuarios);
+          setusuarios(res.data.usuarios);
           setTotalPages(res.data.totalPages || 1);
       } else {
-          setUsuarios(Array.isArray(res.data) ? res.data : []);
+          setusuarios(Array.isArray(res.data) ? res.data : []);
       }
     } catch (error) {
       console.error("Error cargando usuarios:", error);
@@ -57,7 +57,7 @@ export default function GestionUsuarios() {
   };
 
   useEffect(() => {
-    cargarUsuarios(currentPage, busqueda);
+    cargarusuarios(currentPage, busqueda);
   }, [currentPage, busqueda]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,8 +70,8 @@ export default function GestionUsuarios() {
 
   const handleRolChange = async (e: React.ChangeEvent<HTMLSelectElement>, idUsuario: number) => {
     const nuevoRol = e.target.value;
-    const backupUsuarios = [...usuarios];
-    setUsuarios(usuarios.map(u => u.id === idUsuario ? { ...u, rol: nuevoRol as any } : u));
+    const backupusuarios = [...usuarios];
+    setusuarios(usuarios.map(u => u.id === idUsuario ? { ...u, rol: nuevoRol as any } : u));
 
     try {
         await api.put(`/usuarios/${idUsuario}`, 
@@ -80,14 +80,14 @@ export default function GestionUsuarios() {
         );
         toast({ title: 'Rol actualizado', status: 'success', duration: 2000 });
     } catch (error: any) {
-        setUsuarios(backupUsuarios);
+        setusuarios(backupusuarios);
         toast({ title: 'Error al cambiar rol', status: 'error' });
     }
   };
 
   return (
     <Box maxW="container.xl" mx="auto">
-      <Heading mb={6}>Gestión de Usuarios</Heading>
+      <Heading mb={6}>Gestión de usuarios</Heading>
 
       <Flex mb={6} justify="space-between" align="center" wrap="wrap" gap={4}>
         <InputGroup maxW="400px">

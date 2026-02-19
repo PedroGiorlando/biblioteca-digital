@@ -41,13 +41,13 @@ El objetivo fue crear una solución escalable que maneje autenticación segura, 
 |:---:|
 | ![Dashboard](./screenshots/dashboardAdmin.png) |
 
-| Gestion Usuarios | Gestion Ventas |
+| Gestion usuarios | Gestion Ventas |
 |:---:|:---:|
-| ![Gestion Usuarios](./screenshots/gestionUsuarios.png) | ![Gestion Ventas](./screenshots/gestionVentas.png) |
+| ![Gestion usuarios](./screenshots/gestionusuarios.png) | ![Gestion Ventas](./screenshots/gestionVentas.png) |
 
-| Gestion Libros | Reportes |
+| Gestion libros | Reportes |
 |:---:|:---:|
-| ![Gestion Libros](./screenshots/gestionLibros.gif) | ![Reportes](./screenshots/reportes.png) |
+| ![Gestion libros](./screenshots/gestionlibros.gif) | ![Reportes](./screenshots/reportes.png) |
 
 | Vista Movil | Modo Oscuro |
 |:---:|:---:|
@@ -63,13 +63,13 @@ El objetivo fue crear una solución escalable que maneje autenticación segura, 
 * **Gestión de Perfil:** Actualización de datos personales y **subida de foto de perfil** (Avatar) procesada en el servidor.
 * **Carrito y Compras:** Simulación de proceso de compra.
 * **Mi Biblioteca:** Acceso exclusivo a los libros adquiridos.
-* **Lista de Deseados (Wishlist):** Guardado de libros favoritos.
+* **Lista de deseados (Wishlist):** Guardado de libros favoritos.
 * **Promo Banner Inteligente:** Detecta si el usuario es nuevo (sin compras) para ofrecer descuentos.
 
 ### 🛠️ Panel de Administración (Backoffice)
-* **Gestión de Libros (CRUD):** * Crear y editar libros con subida de portadas.
+* **Gestión de libros (CRUD):** * Crear y editar libros con subida de portadas.
     * **Baja Lógica (Soft Delete):** Los libros eliminados no se borran de la BD, solo se desactivan para mantener la integridad histórica.
-* **Gestión de Usuarios:** Visualización de usuarios y **control de roles** (Ascender/Degradar administradores).
+* **Gestión de usuarios:** Visualización de usuarios y **control de roles** (Ascender/Degradar administradores).
 * **Dashboard de Ventas:** Historial completo de transacciones.
 * **Protección:** Rutas protegidas que verifican el rol de Administrador antes de permitir acciones sensibles.
 

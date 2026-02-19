@@ -33,10 +33,10 @@ const initialState: LibroForm = {
   fecha_publicacion: ''
 };
 
-export default function GestionLibros() {
-  const [libros, setLibros] = useState<Libro[]>([]);
+export default function Gestionlibros() {
+  const [libros, setlibros] = useState<Libro[]>([]);
   const [loading, setLoading] = useState(true);
-  const [libroSeleccionado, setLibroSeleccionado] = useState<Libro | null>(null);
+  const [libroseleccionado, setlibroseleccionado] = useState<Libro | null>(null);
   const [formData, setFormData] = useState<LibroForm>(initialState);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -60,7 +60,7 @@ export default function GestionLibros() {
   const { isOpen: isDeleteAlertOpen, onOpen: onDeleteAlertOpen, onClose: onDeleteAlertClose } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null);
 
-  const fetchLibros = async () => {
+  const fetchlibros = async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -69,7 +69,7 @@ export default function GestionLibros() {
 
       const response = await api.get(`/libros?${params.toString()}`);
       
-      setLibros(response.data.libros);
+      setlibros(response.data.libros);
       setTotalPages(response.data.totalPages);
 
     } catch (error) {
@@ -80,18 +80,18 @@ export default function GestionLibros() {
   };
 
   useEffect(() => {
-    if (token) fetchLibros();
+    if (token) fetchlibros();
   }, [token, currentPage, busqueda]);
 
   const abrirAlertaBorrado = (libro: Libro) => {
-    setLibroSeleccionado(libro);
+    setlibroseleccionado(libro);
     onDeleteAlertOpen();
   };
 
   const handleBorrar = async () => {
-    if (!libroSeleccionado) return;
+    if (!libroseleccionado) return;
     try {
-      await api.delete(`/libros/${libroSeleccionado.id}`, {
+      await api.delete(`/libros/${libroseleccionado.id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       toast({ title: 'Libro eliminado (baja lógica)', status: 'success', duration: 3000, isClosable: true });
@@ -99,7 +99,7 @@ export default function GestionLibros() {
       if (libros.length === 1 && currentPage > 1) {
         setCurrentPage(currentPage - 1);
       } else {
-        fetchLibros();
+        fetchlibros();
       }
     } catch (error: any) {
       toast({ title: 'Error al eliminar', description: error.response?.data?.error, status: 'error', duration: 5000, isClosable: true });
@@ -109,7 +109,7 @@ export default function GestionLibros() {
 
   const abrirModalEditar = (libro: Libro) => {
     const fecha = libro.fecha_publicacion ? new Date(libro.fecha_publicacion).toISOString().split('T')[0] : '';
-    setLibroSeleccionado(libro);
+    setlibroseleccionado(libro);
     setFormData({
         titulo: libro.titulo,
         autor: libro.autor,
@@ -122,7 +122,7 @@ export default function GestionLibros() {
   };
 
   const abrirModalCrear = () => {
-    setLibroSeleccionado(null);
+    setlibroseleccionado(null);
     setFormData(initialState);
     setFile(null);
     onEditModalOpen();
@@ -158,15 +158,15 @@ export default function GestionLibros() {
         }
       };
 
-      if (libroSeleccionado) {
-        await api.put(`/libros/${libroSeleccionado.id}`, data, config);
+      if (libroseleccionado) {
+        await api.put(`/libros/${libroseleccionado.id}`, data, config);
         toast({ title: 'Libro actualizado', status: 'success', duration: 3000, isClosable: true });
       } else {
         await api.post('/libros', data, config);
         toast({ title: 'Libro creado', status: 'success', duration: 3000, isClosable: true });
       }
       onEditModalClose();
-      fetchLibros();
+      fetchlibros();
     } catch (error: any) {
       toast({ title: 'Error al guardar', description: error.response?.data?.error, status: 'error', duration: 5000, isClosable: true });
     }
@@ -183,7 +183,7 @@ export default function GestionLibros() {
     <Box maxW="container.xl" mx="auto">
       
       <Flex mb={6} justify="space-between" align="center" wrap="wrap" gap={4}>
-        <Heading>Gestión de Libros</Heading>
+        <Heading>Gestión de libros</Heading>
         <Button colorScheme="blue" onClick={abrirModalCrear} leftIcon={<FaPlus />}>
           Crear Nuevo Libro
         </Button>
@@ -293,7 +293,7 @@ export default function GestionLibros() {
       <Modal isOpen={isEditModalOpen} onClose={onEditModalClose}>
         <ModalOverlay />
         <ModalContent bg={bgTable} color={colorTexto}> 
-          <ModalHeader>{libroSeleccionado ? 'Editar Libro' : 'Crear Libro'}</ModalHeader>
+          <ModalHeader>{libroseleccionado ? 'Editar Libro' : 'Crear Libro'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>

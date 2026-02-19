@@ -168,7 +168,7 @@ export default function Navbar() {
 const NAV_ITEMS = [
   { label: 'Catálogo', icon: FaStore, href: '/catalogo' },
   { label: 'Mi Biblioteca', icon: FaBook, href: '/mi-biblioteca' },
-  { label: 'Deseados', icon: FaHeart, href: '/deseados' },
+  { label: 'deseados', icon: FaHeart, href: '/deseados' },
 ];
 
 const DesktopNav = ({ colorTexto, hoverBg, user }: any) => {

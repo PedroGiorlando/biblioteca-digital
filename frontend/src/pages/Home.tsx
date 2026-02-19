@@ -93,7 +93,7 @@ export default function Home() {
             <Flex flex={1} justify="center">
               <Image
                 src="https://images.unsplash.com/photo-1495446815901-a7297e633e8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                alt="Libros y café"
+                alt="libros y café"
                 borderRadius="2xl"
                 shadow="2xl"
                 w="100%"

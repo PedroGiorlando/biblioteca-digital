@@ -33,7 +33,7 @@ router.post('/registro', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         
-        const sql = 'INSERT INTO Usuarios (nombre, email, password) VALUES (?, ?, ?)';
+        const sql = 'INSERT INTO usuarios (nombre, email, password) VALUES (?, ?, ?)';
         const [result] = await db.query(sql, [nombre, email, hashedPassword]);
         
         res.status(201).json({ mensaje: 'Usuario registrado', idUsuario: result.insertId });
@@ -52,7 +52,7 @@ router.post('/login', async (req, res) => {
         const { email, password } = req.body;
         if (!email || !password) return res.status(400).json({ error: 'Faltan datos' });
 
-        const [usuarios] = await db.query('SELECT * FROM Usuarios WHERE email = ?', [email]);
+        const [usuarios] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
         if (usuarios.length === 0) return res.status(401).json({ error: 'Credenciales inválidas' });
 
         const usuario = usuarios[0];
@@ -92,7 +92,7 @@ router.put('/perfil', verificarToken, upload.single('foto'), async (req, res) =>
     try {
         if (req.file) foto_url = req.file.path.replace(/\\/g, "/");
 
-        let sql = 'UPDATE Usuarios SET nombre = ?';
+        let sql = 'UPDATE usuarios SET nombre = ?';
         const params = [nombre];
 
         if (foto_url) {
@@ -119,13 +119,13 @@ router.put('/perfil', verificarToken, upload.single('foto'), async (req, res) =>
 router.put('/password', verificarToken, async (req, res) => {
     try {
         const { passwordActual, passwordNueva } = req.body;
-        const [u] = await db.query('SELECT * FROM Usuarios WHERE id=?', [req.usuario.id]);
+        const [u] = await db.query('SELECT * FROM usuarios WHERE id=?', [req.usuario.id]);
         const valida = await bcrypt.compare(passwordActual, u[0].password);
         if(!valida) return res.status(400).json({ error: 'Pass actual incorrecta' });
 
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(passwordNueva, salt);
-        await db.query('UPDATE Usuarios SET password=? WHERE id=?', [hash, req.usuario.id]);
+        await db.query('UPDATE usuarios SET password=? WHERE id=?', [hash, req.usuario.id]);
         res.json({ mensaje: 'Pass actualizada' });
     } catch(e) { res.status(500).json({error: 'Error'}); }
 });
@@ -135,7 +135,7 @@ router.get('/', [verificarToken, verificarAdmin], async (req, res) => {
     try {
         const { q } = req.query; // Leemos lo que viene en la URL (?q=pedro)
         
-        let sql = 'SELECT id, nombre, email, rol, foto_url FROM Usuarios';
+        let sql = 'SELECT id, nombre, email, rol, foto_url FROM usuarios';
         const params = [];
 
         // Si hay búsqueda, agregamos el WHERE
@@ -174,7 +174,7 @@ router.put('/:id', [verificarToken, verificarAdmin], async (req, res) => {
         }
 
         // 3. Actualizar en la Base de Datos
-        const sql = 'UPDATE Usuarios SET rol = ? WHERE id = ?';
+        const sql = 'UPDATE usuarios SET rol = ? WHERE id = ?';
         const [result] = await db.query(sql, [rol, id]);
 
         if (result.affectedRows === 0) {
@@ -201,12 +201,12 @@ router.put('/perfil', [verificarToken, upload.single('foto')], async (req, res) 
             // Guardamos la ruta relativa (ej: 'uploads/foto-123.jpg')
             const fotoUrl = req.file.path.replace(/\\/g, "/"); // Fix para Windows
             
-            sql = 'UPDATE Usuarios SET nombre = ?, foto_url = ? WHERE id = ?';
+            sql = 'UPDATE usuarios SET nombre = ?, foto_url = ? WHERE id = ?';
             params = [nombre, fotoUrl, idUsuario];
 
         } else {
             // 2. Si solo cambió el nombre (sin foto nueva)
-            sql = 'UPDATE Usuarios SET nombre = ? WHERE id = ?';
+            sql = 'UPDATE usuarios SET nombre = ? WHERE id = ?';
             params = [nombre, idUsuario];
         }
 
@@ -214,7 +214,7 @@ router.put('/perfil', [verificarToken, upload.single('foto')], async (req, res) 
 
         // 3. ¡IMPORTANTE! Devolver los datos actualizados al frontend
         // Hacemos un SELECT rápido para devolver el usuario fresco
-        const [rows] = await db.query('SELECT id, nombre, email, rol, foto_url FROM Usuarios WHERE id = ?', [idUsuario]);
+        const [rows] = await db.query('SELECT id, nombre, email, rol, foto_url FROM usuarios WHERE id = ?', [idUsuario]);
         
         res.json({ 
             mensaje: 'Perfil actualizado', 

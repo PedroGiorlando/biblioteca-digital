@@ -18,8 +18,8 @@ interface Libro {
 
 function Catalogo() {
   // Estados de datos
-  const [libros, setLibros] = useState<Libro[]>([]);
-  const [misLibrosIds, setMisLibrosIds] = useState<number[]>([]); // Lista de IDs que ya compré
+  const [libros, setlibros] = useState<Libro[]>([]);
+  const [mislibrosIds, setMislibrosIds] = useState<number[]>([]); // Lista de IDs que ya compré
   const [categorias, setCategorias] = useState<string[]>([]);
   
   // Estados de UI y Filtros
@@ -44,28 +44,28 @@ function Catalogo() {
     fetchCategorias();
   }, []);
 
-  // 2. Cargar "Mis Libros" (Solo si estoy logueado)
+  // 2. Cargar "Mis libros" (Solo si estoy logueado)
   useEffect(() => {
     if (isAuthenticated && token) {
-        const fetchMisLibros = async () => {
+        const fetchMislibros = async () => {
            try {
              const res = await api.get('/adquisiciones/mis-libros', {
                 headers: { 'Authorization': `Bearer ${token}` }
              });
              // Guardamos solo los IDs en un array simple: [1, 5, 20]
              const ids = res.data.map((l: any) => l.id);
-             setMisLibrosIds(ids);
+             setMislibrosIds(ids);
            } catch (error) {
              console.error("Error cargando mis libros", error);
            }
         };
-        fetchMisLibros();
+        fetchMislibros();
     }
   }, [isAuthenticated, token]);
 
   // 3. Cargar el Catálogo (Cada vez que busco, filtro o cambio de página)
   useEffect(() => {
-    const fetchLibros = async () => {
+    const fetchlibros = async () => {
       setLoading(true);
       try {
         const params = new URLSearchParams();
@@ -78,11 +78,11 @@ function Catalogo() {
         // Asumiendo que tu backend devuelve { libros: [], totalPages: 1 }
         // Si tu backend devuelve un array directo, ajusta esto.
         if (response.data.libros) {
-            setLibros(response.data.libros);
+            setlibros(response.data.libros);
             setTotalPages(response.data.totalPages);
         } else {
             // Fallback por si el backend devuelve array directo
-            setLibros(response.data); 
+            setlibros(response.data); 
         }
 
       } catch (error) {
@@ -92,7 +92,7 @@ function Catalogo() {
       }
     };
 
-    fetchLibros();
+    fetchlibros();
   }, [busqueda, categoriaSeleccionada, currentPage]);
 
 
@@ -148,7 +148,7 @@ function Catalogo() {
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={10}>
         {libros.map((libro) => {
             // Verificamos si este libro está en mi lista de IDs comprados
-            const loTengo = misLibrosIds.includes(libro.id);
+            const loTengo = mislibrosIds.includes(libro.id);
 
             return (
                 <Box key={libro.id} position="relative"> 

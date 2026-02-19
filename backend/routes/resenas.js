@@ -7,7 +7,7 @@ const verificarToken = require('../middleware/authMiddleware');
 router.post('/', verificarToken, async (req, res) => {
     try {
         const { id_libro, calificacion, comentario } = req.body;
-        await db.query('INSERT INTO Resenas (id_usuario, id_libro, calificacion, comentario) VALUES (?, ?, ?, ?)', [req.usuario.id, id_libro, calificacion, comentario]);
+        await db.query('INSERT INTO resenas (id_usuario, id_libro, calificacion, comentario) VALUES (?, ?, ?, ?)', [req.usuario.id, id_libro, calificacion, comentario]);
         res.status(201).json({ mensaje: 'Reseña guardada' });
     } catch (e) {
         res.status(400).json({ error: 'Error o ya opinaste' });
@@ -16,7 +16,7 @@ router.post('/', verificarToken, async (req, res) => {
 
 // GET /:id_libro
 router.get('/:id_libro', async (req, res) => {
-    const [rows] = await db.query('SELECT R.*, U.nombre as autor_resena FROM Resenas R JOIN Usuarios U ON R.id_usuario = U.id WHERE R.id_libro = ? ORDER BY R.fecha DESC', [req.params.id_libro]);
+    const [rows] = await db.query('SELECT R.*, U.nombre as autor_resena FROM resenas R JOIN usuarios U ON R.id_usuario = U.id WHERE R.id_libro = ? ORDER BY R.fecha DESC', [req.params.id_libro]);
     res.json(rows);
 });
 

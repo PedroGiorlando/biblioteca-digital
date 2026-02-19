@@ -17,7 +17,7 @@ interface LibroAdquirido {
 }
 
 function MiBiblioteca() {
-  const [libros, setLibros] = useState<LibroAdquirido[]>([]);
+  const [libros, setlibros] = useState<LibroAdquirido[]>([]);
   const [loading, setLoading] = useState(true);
   const { token } = useAuth();
 
@@ -31,7 +31,7 @@ function MiBiblioteca() {
         const response = await api.get('/adquisiciones/mis-libros', {
            headers: { 'Authorization': `Bearer ${token}` }
         });
-        setLibros(response.data);
+        setlibros(response.data);
       } catch (error) {
         console.error("Error cargando biblioteca", error);
       } finally {

@@ -7,21 +7,21 @@ const verificarAdmin = require('../middleware/adminMiddleware');
 // GET /stats (Dashboard)
 router.get('/stats', [verificarToken, verificarAdmin], async (req, res) => {
     try {
-        // 1. Total Usuarios
-        const [ [u] ] = await db.query('SELECT COUNT(*) as t FROM Usuarios');
+        // 1. Total usuarios
+        const [ [u] ] = await db.query('SELECT COUNT(*) as t FROM usuarios');
         
-        // 2. Total Libros en Catálogo
-        const [ [l] ] = await db.query('SELECT COUNT(*) as t FROM Libros WHERE activo=1');
+        // 2. Total libros en Catálogo
+        const [ [l] ] = await db.query('SELECT COUNT(*) as t FROM libros WHERE activo=1');
         
         // 3. CAMBIO: Total Ventas (Cantidad de libros vendidos)
-        const [ [v] ] = await db.query('SELECT COUNT(*) as t FROM Adquisiciones');
+        const [ [v] ] = await db.query('SELECT COUNT(*) as t FROM adquisiciones');
 
         // 4. CAMBIO: Ganancias Totales (Suma del dinero)
-        const [ [g] ] = await db.query('SELECT SUM(monto_pagado) as t FROM Adquisiciones');
+        const [ [g] ] = await db.query('SELECT SUM(monto_pagado) as t FROM adquisiciones');
         
         res.json({ 
-            totalUsuarios: u.t, 
-            totalLibros: l.t, 
+            totalusuarios: u.t, 
+            totallibros: l.t, 
             totalVentas: v.t, 
             gananciasTotales: g.t || 0 // Si es null, devuelve 0
         });
@@ -32,7 +32,7 @@ router.get('/stats', [verificarToken, verificarAdmin], async (req, res) => {
 
 // GET /categorias
 router.get('/categorias', async (req, res) => {
-    const [rows] = await db.query('SELECT DISTINCT categoria FROM Libros WHERE categoria IS NOT NULL');
+    const [rows] = await db.query('SELECT DISTINCT categoria FROM libros WHERE categoria IS NOT NULL');
     res.json(rows.map(r => r.categoria));
 });
 
@@ -44,8 +44,8 @@ router.get('/reportes/top-libros', [verificarToken, verificarAdmin], async (req,
                 L.titulo, 
                 COUNT(A.id) as total_ventas,
                 SUM(A.monto_pagado) as ingresos_generados
-            FROM Adquisiciones A
-            JOIN Libros L ON A.id_libro = L.id
+            FROM adquisiciones A
+            JOIN libros L ON A.id_libro = L.id
             GROUP BY L.id, L.titulo
             ORDER BY total_ventas DESC
             LIMIT 5
@@ -67,8 +67,8 @@ router.get('/reportes/top-usuarios', [verificarToken, verificarAdmin], async (re
                 U.email,
                 COUNT(A.id) as libros_comprados,
                 SUM(A.monto_pagado) as total_gastado
-            FROM Adquisiciones A
-            JOIN Usuarios U ON A.id_usuario = U.id
+            FROM adquisiciones A
+            JOIN usuarios U ON A.id_usuario = U.id
             GROUP BY U.id, U.nombre, U.email
             ORDER BY total_gastado DESC
             LIMIT 5

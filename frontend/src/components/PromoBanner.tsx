@@ -22,7 +22,7 @@ export default function PromoBanner() {
 
   const verificarCompras = async () => {
     try {
-      // Reutilizamos la ruta de 'Mis Libros' para ver si tiene alguno
+      // Reutilizamos la ruta de 'Mis libros' para ver si tiene alguno
       const res = await api.get('/adquisiciones', {
         headers: { Authorization: `Bearer ${token}` }
       });

@@ -7,8 +7,8 @@ const verificarToken = require('../middleware/authMiddleware');
 router.get('/', verificarToken, async (req, res) => {
     try {
         const sql = `
-            SELECT L.* FROM Deseados D
-            JOIN Libros L ON D.id_libro = L.id
+            SELECT L.* FROM deseados D
+            JOIN libros L ON D.id_libro = L.id
             WHERE D.id_usuario = ?
             AND L.activo = 1 
         `;
@@ -28,12 +28,12 @@ router.post('/', verificarToken, async (req, res) => {
         const { id_libro } = req.body;
         // Evitar duplicados
         const [existe] = await db.query(
-            'SELECT * FROM Deseados WHERE id_usuario = ? AND id_libro = ?',
+            'SELECT * FROM deseados WHERE id_usuario = ? AND id_libro = ?',
             [req.usuario.id, id_libro]
         );
 
         if (existe.length === 0) {
-            await db.query('INSERT INTO Deseados (id_usuario, id_libro) VALUES (?, ?)', [req.usuario.id, id_libro]);
+            await db.query('INSERT INTO deseados (id_usuario, id_libro) VALUES (?, ?)', [req.usuario.id, id_libro]);
         }
         
         res.status(201).json({ mensaje: 'Agregado a deseados' });
@@ -46,7 +46,7 @@ router.post('/', verificarToken, async (req, res) => {
 router.delete('/:id_libro', verificarToken, async (req, res) => {
     try {
         await db.query(
-            'DELETE FROM Deseados WHERE id_usuario = ? AND id_libro = ?',
+            'DELETE FROM deseados WHERE id_usuario = ? AND id_libro = ?',
             [req.usuario.id, req.params.id_libro]
         );
         res.json({ mensaje: 'Eliminado de deseados' });
@@ -59,7 +59,7 @@ router.delete('/:id_libro', verificarToken, async (req, res) => {
 router.get('/check/:id_libro', verificarToken, async (req, res) => {
     try {
         const [rows] = await db.query(
-            'SELECT * FROM Deseados WHERE id_usuario = ? AND id_libro = ?',
+            'SELECT * FROM deseados WHERE id_usuario = ? AND id_libro = ?',
             [req.usuario.id, req.params.id_libro]
         );
         res.json({ esDeseado: rows.length > 0 });

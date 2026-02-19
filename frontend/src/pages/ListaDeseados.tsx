@@ -12,18 +12,18 @@ interface Libro {
   categoria: string | null;
 }
 
-function ListaDeseados() {
-  const [libros, setLibros] = useState<Libro[]>([]);
+function Listadeseados() {
+  const [libros, setlibros] = useState<Libro[]>([]);
   const [loading, setLoading] = useState(true);
   const { token } = useAuth();
 
   useEffect(() => {
-    const fetchDeseados = async () => {
+    const fetchdeseados = async () => {
       try {
         const response = await api.get('/deseados', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        setLibros(response.data);
+        setlibros(response.data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -31,14 +31,14 @@ function ListaDeseados() {
       }
     };
 
-    if (token) fetchDeseados();
+    if (token) fetchdeseados();
   }, [token]);
 
   if (loading) return <Box textAlign="center" mt={20}><Spinner size="xl" /></Box>;
 
   return (
     <Box>
-      <Heading mb={6}>Mi Lista de Deseados ❤️</Heading>
+      <Heading mb={6}>Mi Lista de deseados ❤️</Heading>
       
       {libros.length === 0 ? (
         <Text fontSize="lg" color="gray.500">No tienes libros en tu lista de deseados aún.</Text>
@@ -53,4 +53,4 @@ function ListaDeseados() {
   );
 }
 
-export default ListaDeseados;
+export default Listadeseados;
