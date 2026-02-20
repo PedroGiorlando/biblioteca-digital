@@ -85,7 +85,7 @@ function Login() {
              Prueba la vista de un usuario común con estas credenciales:
           </Text>
           <Text fontSize="sm" color="blue.700">
-           <strong>Correo:</strong> usuariotest@gmail.com
+           <strong>Correo:</strong> cuentademo@correo.com
           </Text>
           <Text fontSize="sm" color="blue.700">
           <strong>Clave:</strong> miContraseña1!
