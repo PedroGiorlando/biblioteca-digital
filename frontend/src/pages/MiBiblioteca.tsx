@@ -83,7 +83,7 @@ function MiBiblioteca() {
                   _hover={{ transform: 'translateY(-5px)', shadow: 'md' }}
                 >
                   <Image 
-                    src={libro.portada_url?.startsWith('http') ? libro.portada_url : `http://localhost:3000/${libro.portada_url}`} 
+                    src={libro.portada_url?.startsWith('http') ? libro.portada_url : `https://biblioteca-digital-fi5y.onrender.com/${libro.portada_url}`}
                     alt={libro.titulo}
                     h="250px" 
                     w="100%" 

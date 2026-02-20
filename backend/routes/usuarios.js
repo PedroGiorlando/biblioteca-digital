@@ -83,37 +83,6 @@ router.post('/login', async (req, res) => {
 //             RUTAS DE PERFIL Y GESTIÓN
 // ==========================================
 
-// 3. ACTUALIZAR PERFIL (CON FOTO)
-router.put('/perfil', verificarToken, upload.single('foto'), async (req, res) => {
-    const id_usuario = req.usuario.id;
-    const { nombre } = req.body;
-    let foto_url = null;
-
-    try {
-        if (req.file) foto_url = req.file.path.replace(/\\/g, "/");
-
-        let sql = 'UPDATE usuarios SET nombre = ?';
-        const params = [nombre];
-
-        if (foto_url) {
-            sql += ', foto_url = ?';
-            params.push(foto_url);
-        }
-        sql += ' WHERE id = ?';
-        params.push(id_usuario);
-
-        await db.query(sql, params);
-        
-        // Devolvemos los datos actualizados
-        res.json({ 
-            mensaje: 'Perfil actualizado', 
-            usuario: { id: id_usuario, nombre, foto_url } 
-        });
-
-    } catch (error) {
-        res.status(500).json({ error: 'Error al actualizar perfil' });
-    }
-});
 
 // 4. CAMBIAR PASSWORD
 router.put('/password', verificarToken, async (req, res) => {

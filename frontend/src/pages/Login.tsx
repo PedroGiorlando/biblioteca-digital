@@ -77,6 +77,20 @@ function Login() {
             </Text>
           </Box>
           <Button type='submit' colorScheme='blue' width='full'>Entrar</Button>
+          <Box mt={6} p={4} bg="blue.50" borderRadius="md" borderWidth="1px" borderColor="blue.200">
+          <Text fontSize="sm" color="blue.800" fontWeight="bold" mb={1}>
+            ¿Evaluando el proyecto?
+          </Text>
+          <Text fontSize="sm" color="blue.700">
+             Prueba la vista de administrador:
+          </Text>
+          <Text fontSize="sm" color="blue.700">
+           <strong>Correo:</strong> pedro@correo.com
+          </Text>
+          <Text fontSize="sm" color="blue.700">
+          <strong>Clave:</strong> miContraseña1!
+          </Text>
+</Box>
         </VStack>
       </Box>
     </Box>

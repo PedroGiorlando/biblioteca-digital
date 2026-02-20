@@ -42,9 +42,9 @@ function MiPerfil() {
 
   // Helper para construir la URL de la imagen
   const getAvatarUrl = (path: string | null | undefined) => {
-    if (!path) return undefined;
-    return path.startsWith('http') ? path : `http://localhost:3000/${path}`;
-  };
+  if (!path) return undefined;
+  return path.startsWith('http') ? path : `https://biblioteca-digital-fi5y.onrender.com/${path}`; // <-- Cambiado aquí
+};
 
   // --- MANEJO DE FOTO ---
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
