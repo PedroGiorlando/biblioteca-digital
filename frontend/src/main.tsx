@@ -17,16 +17,16 @@ import LibroDetalle from './pages/LibroDetalle.tsx';
 import MiBiblioteca from './pages/MiBiblioteca.tsx';
 import Lector from './pages/Lector';
 import MiPerfil from './pages/MiPerfil.tsx';
-import Listadeseados from './pages/Listadeseados.tsx';
+import Listadeseados from './pages/ListaDeseados.tsx';
 
 // Rutas Admin
 import RutaAdmin from './components/RutaAdmin.tsx';
 import AdminLayout from './pages/admin/AdminLayout.tsx';
 import Dashboard from './pages/admin/Dashboard.tsx';
-import Gestionusuarios from './pages/admin/Gestionusuarios.tsx';
+import Gestionusuarios from './pages/admin/GestionUsuarios.tsx';
 import GestionVentas from './pages/admin/GestionVentas.tsx';
 import Reportes from './pages/admin/Reportes.tsx';
-import Gestionlibros from './pages/admin/Gestionlibros.tsx';
+import Gestionlibros from './pages/admin/GestionLibros.tsx';
 
 // Seguridad
 import RutaProtegida from './components/RutaProtegida.tsx';
