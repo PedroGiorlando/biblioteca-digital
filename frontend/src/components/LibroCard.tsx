@@ -21,9 +21,17 @@ function LibroCard({ libro }: Props) {
   const bgImagen = useColorModeValue('gray.100', 'gray.600'); // Fondo de la imagen
   
  const getImageUrl = (url: string) => {
-    if (url.startsWith('http')) return url;
-    return `https://biblioteca-digital-fi5y.onrender.com/${url}`;
-  };
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+
+  // 1. Eliminamos la barra inicial si existe para evitar rutas con '//'
+  const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
+
+  // 2. Nos aseguramos de que incluya la ruta estática que definiste en tu backend
+  const finalPath = cleanUrl.startsWith('uploads/') ? cleanUrl : `uploads/${cleanUrl}`;
+
+  return `https://biblioteca-digital-fi5y.onrender.com/${finalPath}`;
+};
 
   return (
     <Flex
