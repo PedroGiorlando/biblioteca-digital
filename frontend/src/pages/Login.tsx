@@ -82,10 +82,10 @@ function Login() {
             ¿Evaluando el proyecto?
           </Text>
           <Text fontSize="sm" color="blue.700">
-             Prueba la vista de administrador:
+             Prueba la vista de un usuario común con estas credenciales:
           </Text>
           <Text fontSize="sm" color="blue.700">
-           <strong>Correo:</strong> pedro@correo.com
+           <strong>Correo:</strong> usuariotest@gmail.com
           </Text>
           <Text fontSize="sm" color="blue.700">
           <strong>Clave:</strong> miContraseña1!
