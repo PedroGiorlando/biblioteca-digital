@@ -80,9 +80,47 @@ router.post('/login', async (req, res) => {
 });
 
 // ==========================================
-//             RUTAS DE PERFIL Y GESTIÓN
+//             RUTAS DE PERFIL Y GESTIÓNs
 // ==========================================
 
+// --- RUTA PARA ACTUALIZAR MI PROPIO PERFIL (Nombre y Foto) ---
+// PUT /perfil
+router.put('/perfil', [verificarToken, upload.single('foto')], async (req, res) => {
+    try {
+        const idUsuario = req.usuario.id;
+        const { nombre } = req.body;
+        let sql, params;
+
+        // 1. Si subió una foto nueva
+        if (req.file) {
+            // Guardamos la ruta relativa (ej: 'uploads/foto-123.jpg')
+            const fotoUrl = req.file.path.replace(/\\/g, "/"); // Fix para Windows
+            
+            sql = 'UPDATE usuarios SET nombre = ?, foto_url = ? WHERE id = ?';
+            params = [nombre, fotoUrl, idUsuario];
+
+        } else {
+            // 2. Si solo cambió el nombre (sin foto nueva)
+            sql = 'UPDATE usuarios SET nombre = ? WHERE id = ?';
+            params = [nombre, idUsuario];
+        }
+
+        await db.query(sql, params);
+
+        // 3. ¡IMPORTANTE! Devolver los datos actualizados al frontend
+        // Hacemos un SELECT rápido para devolver el usuario fresco
+        const [rows] = await db.query('SELECT id, nombre, email, rol, foto_url FROM usuarios WHERE id = ?', [idUsuario]);
+        
+        res.json({ 
+            mensaje: 'Perfil actualizado', 
+            usuario: rows[0] 
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al actualizar perfil' });
+    }
+});
 
 // 4. CAMBIAR PASSWORD
 router.put('/password', verificarToken, async (req, res) => {
@@ -157,43 +195,6 @@ router.put('/:id', [verificarToken, verificarAdmin], async (req, res) => {
         res.status(500).json({ error: 'Error interno al cambiar rol' });
     }
 });
-// --- RUTA PARA ACTUALIZAR MI PROPIO PERFIL (Nombre y Foto) ---
-// PUT /perfil
-router.put('/perfil', [verificarToken, upload.single('foto')], async (req, res) => {
-    try {
-        const idUsuario = req.usuario.id;
-        const { nombre } = req.body;
-        let sql, params;
 
-        // 1. Si subió una foto nueva
-        if (req.file) {
-            // Guardamos la ruta relativa (ej: 'uploads/foto-123.jpg')
-            const fotoUrl = req.file.path.replace(/\\/g, "/"); // Fix para Windows
-            
-            sql = 'UPDATE usuarios SET nombre = ?, foto_url = ? WHERE id = ?';
-            params = [nombre, fotoUrl, idUsuario];
-
-        } else {
-            // 2. Si solo cambió el nombre (sin foto nueva)
-            sql = 'UPDATE usuarios SET nombre = ? WHERE id = ?';
-            params = [nombre, idUsuario];
-        }
-
-        await db.query(sql, params);
-
-        // 3. ¡IMPORTANTE! Devolver los datos actualizados al frontend
-        // Hacemos un SELECT rápido para devolver el usuario fresco
-        const [rows] = await db.query('SELECT id, nombre, email, rol, foto_url FROM usuarios WHERE id = ?', [idUsuario]);
-        
-        res.json({ 
-            mensaje: 'Perfil actualizado', 
-            usuario: rows[0] 
-        });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Error al actualizar perfil' });
-    }
-});
 
 module.exports = router;

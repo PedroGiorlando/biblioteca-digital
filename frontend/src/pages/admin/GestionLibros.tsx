@@ -235,7 +235,7 @@ export default function Gestionlibros() {
                        <Td borderColor={borderColor}>
                          {libro.portada_url ? (
                            <Image 
-                             src={libro.portada_url.startsWith('http') ? libro.portada_url : `http://localhost:3000/${libro.portada_url}`} 
+                             src={libro.portada_url?.startsWith('http') ? libro.portada_url : `https://biblioteca-digital-fi5y.onrender.com/${libro.portada_url}`}
                              alt="Portada" 
                              boxSize="50px" 
                              objectFit="cover" 
