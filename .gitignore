@@ -8,6 +8,7 @@
 .DS_Store
 Thumbs.db
 # Ignorar uploads especificamente
-backend/uploads/
-**/uploads/
+# backend/uploads/
+# **/uploads/
 backend/.env
+

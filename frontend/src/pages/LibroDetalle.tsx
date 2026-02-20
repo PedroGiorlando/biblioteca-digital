@@ -223,7 +223,7 @@ function LibroDetalle() {
                 <AspectRatio ratio={2 / 3}>
                     {libro.portada_url ? (
                         <Image 
-                            src={libro.portada_url.startsWith('http') ? libro.portada_url : `http://localhost:3000/${libro.portada_url}`} 
+                            src={libro.portada_url.startsWith('http') ? libro.portada_url : `https://biblioteca-digital-fi5y.onrender.com/${libro.portada_url}`}
                             objectFit="cover" 
                             fallbackSrc="https://via.placeholder.com/400x600?text=Sin+Portada"
                         />
@@ -377,7 +377,7 @@ function LibroDetalle() {
               {/* 1. RESUMEN: Usamos tu 'bgCaja' y 'borderColor' */}
               <HStack spacing={4} align="start" bg={bgCaja} p={3} borderRadius="md" borderWidth="1px" borderColor={borderColor}>
                  <Image 
-                    src={libro?.portada_url ? (libro.portada_url.startsWith('http') ? libro.portada_url : `http://localhost:3000/${libro.portada_url}`) : 'https://via.placeholder.com/50'}
+                    src={libro?.portada_url ? (libro.portada_url.startsWith('http') ? libro.portada_url : `https://biblioteca-digital-fi5y.onrender.com/${libro.portada_url}`) : 'https://via.placeholder.com/50'}
                     boxSize="60px"
                     objectFit="cover"
                     borderRadius="md"

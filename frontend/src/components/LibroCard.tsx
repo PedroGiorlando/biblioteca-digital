@@ -20,9 +20,9 @@ function LibroCard({ libro }: Props) {
   const colorTexto = useColorModeValue('gray.600', 'gray.300'); // Gris oscuro en día, Gris claro en noche
   const bgImagen = useColorModeValue('gray.100', 'gray.600'); // Fondo de la imagen
   
-  const getImageUrl = (url: string) => {
+ const getImageUrl = (url: string) => {
     if (url.startsWith('http')) return url;
-    return `http://localhost:3000/${url}`;
+    return `https://biblioteca-digital-fi5y.onrender.com/${url}`;
   };
 
   return (
