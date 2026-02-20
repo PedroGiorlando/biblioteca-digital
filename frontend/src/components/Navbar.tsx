@@ -12,9 +12,8 @@ import { useAuth } from '../context/AuthContext';
 
 // Esta función revisa si la foto viene del backend o si es externa
 const getAvatarUrl = (path: string | null | undefined) => {
-  if (!path) return undefined; // Si no hay foto, devuelve undefined para que Chakra muestre la inicial
-  // Si ya tiene http (ej: foto de Google), la deja igual. Si no, le pega el localhost:3000
-  return path.startsWith('http') ? path : `http://localhost:3000/${path}`;
+  if (!path) return undefined; 
+  return path.startsWith('http') ? path : `https://biblioteca-digital-fi5y.onrender.com/${path}`;
 };
 
 export default function Navbar() {

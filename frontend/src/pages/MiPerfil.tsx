@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
 function MiPerfil() {
-  const { user, token, login } = useAuth(); 
+  const { user, token, actualizarUsuario } = useAuth(); 
   const toast = useToast();
 
   // --- COLORES DINÁMICOS (DARK MODE) ---
@@ -78,7 +78,10 @@ const handleUpdateProfile = async (e: React.FormEvent) => {
       if (token && response.data.usuario) {
         
         // Actualizamos el contexto y el localStorage
-        login(token, { ...user, ...response.data.usuario }); 
+        actualizarUsuario({
+        nombre: response.data.usuario.nombre,
+        foto_url: response.data.usuario.foto_url
+      });
       }
 
       toast({ title: 'Perfil actualizado', status: 'success', duration: 3000, isClosable: true });
